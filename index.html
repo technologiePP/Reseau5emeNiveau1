@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Le réseau local</title>
+<style>
+:root{--bg:#f1f5fb;--ink:#1b2540;--blue:#2563eb;--dark:#1e3a8a;--green:#16a34a;--orange:#f59e0b;--red:#dc2626;--card:#fff;--line:#d5dcec;--fs:clamp(15px,2.3vh,18px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+body{height:var(--H,100vh);display:flex;flex-direction:column;font-family:"Segoe UI","Trebuchet MS",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:1.4;-webkit-text-size-adjust:100%;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+h1{font-size:clamp(24px,4.4vh,40px);margin:0 0 6px;line-height:1.15}
+h2{font-size:clamp(20px,3.4vh,28px);margin:0;line-height:1.2}
+h3{margin:0 0 6px}
+
+header.top{flex:none;background:var(--dark);color:#fff;display:flex;gap:8px;align-items:center;padding:8px 14px;padding-top:max(8px,env(safe-area-inset-top))}
+.brand{font-weight:800;font-size:19px;margin-right:auto;background:none;border:0;color:#fff;padding:4px 0;white-space:nowrap}
+nav{display:flex;gap:5px}
+nav button{background:rgba(255,255,255,.12);color:#fff;border:0;padding:7px 12px;border-radius:999px;font-weight:600;font-size:15px;white-space:nowrap}
+nav button:hover{background:rgba(255,255,255,.25)}
+nav button.on{background:#fff;color:var(--dark)}
+
+main{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;max-width:1240px;margin:0 auto;padding:10px 16px;padding-bottom:max(8px,env(safe-area-inset-bottom))}
+.page{display:none;flex:1;min-height:0;flex-direction:column;gap:10px;overflow:auto}
+.page.active{display:flex;animation:fadein .3s}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+.panel{background:var(--card);border-radius:18px;padding:12px 14px;box-shadow:0 4px 14px rgba(30,58,138,.1);min-height:0}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:12px;padding:9px 16px;font-weight:700;font-size:inherit}
+.btn:hover{filter:brightness(1.1)}
+.btn.sec{background:#e2e8f7;color:var(--dark)}
+.btn.green{background:var(--green)}
+.btn.orange{background:var(--orange);color:#3b2400}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* ---------- Accueil ---------- */
+.hero{flex:none;background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#38bdf8);color:#fff;border-radius:22px;padding:clamp(12px,2.6vh,26px) 24px}
+.hero p{font-size:clamp(15px,2.4vh,19px);margin:0;max-width:700px}
+.hero .deco{display:flex;gap:10px;margin-top:clamp(8px,2vh,18px);flex-wrap:wrap}
+.hero .deco svg{width:66px;height:54px;background:rgba(255,255,255,.18);border-radius:14px;padding:4px}
+.cards{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:14px}
+.card{display:flex;flex-direction:column;min-height:0;background:var(--card);border:0;border-radius:20px;text-align:left;padding:0;box-shadow:0 6px 18px rgba(30,58,138,.12);overflow:hidden;transition:transform .15s,box-shadow .15s;color:inherit}
+.card:hover,.card:focus-visible{transform:translateY(-4px);box-shadow:0 12px 26px rgba(30,58,138,.2);outline:none}
+.card .band{flex:1;min-height:50px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:clamp(34px,7vh,54px);position:relative}
+.card .band svg{width:clamp(70px,13vh,110px);height:auto}
+.card .num{position:absolute;top:10px;left:12px;background:#fff;color:var(--ink);font-weight:800;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.card .body{flex:none;padding:12px 16px 14px}
+.card .body h3{font-size:clamp(16px,2.6vh,20px)}
+.card .body p{margin:2px 0 10px;color:#44506e;font-size:clamp(13px,2vh,16px);line-height:1.35}
+.card .go{display:inline-block;background:var(--blue);color:#fff;border-radius:999px;padding:5px 14px;font-weight:700;font-size:clamp(13px,2vh,15px)}
+.c1 .band{background:linear-gradient(135deg,#bfdbfe,#93c5fd)}
+.c2 .band{background:linear-gradient(135deg,#fde68a,#fcd34d)}
+.c3 .band{background:linear-gradient(135deg,#bbf7d0,#86efac)}
+.c4 .band{background:linear-gradient(135deg,#fbcfe8,#c4b5fd)}
+
+/* ---------- Découvrir ---------- */
+.disc{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:12px}
+.discL,.discR{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+.svgp{position:relative;flex:1;min-height:140px;padding:0}
+#netsvg{position:absolute;top:6px;left:6px;width:calc(100% - 12px);height:calc(100% - 12px);display:block;background:linear-gradient(#f8fbff,#eaf1fc);border-radius:14px;border:2px solid var(--line)}
+.stepP{flex:1;overflow:auto}
+.scenP{flex:none}
+.scenP h3{font-size:clamp(15px,2.3vh,18px);margin-bottom:6px}
+.btncol{display:flex;flex-direction:column;gap:7px}
+.btncol .btn{text-align:left;font-size:clamp(14px,2.1vh,16px);padding:8px 12px}
+#caption{flex:none;background:#fff7d6;border:2px solid #fcd34d;border-radius:14px;padding:8px 14px;font-size:clamp(14px,2.2vh,17px);min-height:3.4em}
+.dev{transition:opacity .3s}
+.dev.dim{opacity:.22}
+.dev.hl{animation:glow 1.1s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 3px #facc15)}50%{filter:drop-shadow(0 0 16px #f59e0b)}}
+.lbl{font-size:19px;font-weight:700;fill:#1b2540;text-anchor:middle}
+.ip{font:600 15px ui-monospace,Menlo,Consolas,monospace;fill:#475569;text-anchor:middle;opacity:0;transition:opacity .5s}
+#netsvg.showip .ip{opacity:1}
+.ptxt{font:700 14px ui-monospace,Menlo,Consolas,monospace;fill:#1b2540}
+.cable{stroke:#64748b;stroke-width:5;stroke-linecap:round;transition:opacity .3s,stroke .3s}
+.cable.dim{opacity:.18}
+.cable.hl{stroke:#f59e0b;stroke-width:8}
+.step-title{font-size:clamp(17px,2.9vh,23px);font-weight:800;color:var(--dark);margin-bottom:4px}
+.step-text{font-size:clamp(14px,2.25vh,17px);line-height:1.4;margin:0 0 10px}
+.dots{display:flex;gap:6px;margin-bottom:8px}
+.dots i{width:12px;height:12px;border-radius:50%;background:#cbd5e8;display:block}
+.dots i.on{background:var(--blue);transform:scale(1.3)}
+
+/* ---------- Vérifier ---------- */
+.qtop{flex:none;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.scorebar{flex:1 1 280px;min-width:0;display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:6px 14px;box-shadow:0 3px 10px rgba(30,58,138,.12)}
+.scorebar .pb{flex:1;min-width:80px;height:12px;background:#e2e8f7;border-radius:99px;overflow:hidden}
+.scorebar .pb div{height:100%;width:0;background:linear-gradient(90deg,#38bdf8,#22c55e);transition:width .4s}
+.scorebar b{font-size:20px;color:var(--dark)}
+.scorebar .btn{padding:6px 12px;font-size:15px}
+.qwrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.qhead{flex:none;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.qtitle{background:var(--dark);color:#fff;border-radius:999px;padding:3px 14px;font-weight:700;font-size:15px}
+.qdots{display:flex;gap:6px;margin-left:auto}
+.qdots i{width:14px;height:14px;border-radius:50%;background:#cbd5e8;display:block}
+.qdots i.ok{background:var(--green)}
+.qdots i.late{background:var(--orange)}
+.qdots i.cur{outline:3px solid var(--blue);outline-offset:2px}
+.qcard{flex:1;min-height:0;background:#fff;border-radius:20px;padding:clamp(12px,3vh,26px);box-shadow:0 3px 10px rgba(30,58,138,.1);display:flex;flex-direction:column;justify-content:center;gap:clamp(10px,2.6vh,22px);overflow:auto}
+.qcard p.t,.qmatch p.t{font-size:clamp(18px,3.2vh,27px);font-weight:700;margin:0;line-height:1.25}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opt{background:#f1f5fb;border:3px solid var(--line);border-radius:14px;padding:clamp(10px,2vh,16px) 16px;text-align:left;color:var(--ink);font-size:clamp(15px,2.5vh,20px)}
+.opt:hover:not(:disabled){border-color:var(--blue);background:#e8f0ff}
+.opt:disabled{cursor:default}
+.opt.ok{background:#dcfce7;border-color:var(--green)}
+.opt.bad{background:#fee2e2;border-color:var(--red)}
+.opt.vf{text-align:center;font-weight:700;font-size:clamp(18px,3vh,24px)}
+.qfoot{flex:none;display:flex;gap:10px;align-items:stretch}
+.qfoot .btn{flex:none;font-size:clamp(15px,2.4vh,19px);padding:8px 22px}
+.exp{flex:1;font-size:clamp(14px,2.2vh,17px);padding:8px 12px;border-radius:12px;background:#eef3ff;display:flex;align-items:center;min-height:54px}
+.exp.ok{background:#dcfce7}
+.exp.bad{background:#fee2e2}
+.exp.warn{background:#fff1cf}
+.exp.idle{visibility:hidden}
+.qmatch{flex:1;min-height:0;background:#fff;border-radius:20px;padding:clamp(10px,2.4vh,20px);box-shadow:0 3px 10px rgba(30,58,138,.1);display:flex;flex-direction:column;gap:10px;overflow:auto}
+.qmatch p.t{font-size:clamp(15px,2.5vh,20px)}
+.match{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1.5fr;gap:0 24px;align-content:start}
+.mi{display:block;width:100%;background:#f1f5fb;border:3px solid var(--line);border-radius:12px;padding:clamp(6px,1.5vh,11px) 12px;margin-bottom:clamp(5px,1.2vh,9px);text-align:left;color:var(--ink);font-size:clamp(14px,2.3vh,18px)}
+.mi.sel{border-color:var(--blue);box-shadow:0 0 0 4px #bfdbfe}
+.mi.paired{border-color:var(--c);background:#eef3ff}
+@supports (background:color-mix(in srgb,red 10%,white)){.mi.paired{background:color-mix(in srgb,var(--c) 18%,#fff)}}
+.mi.ok{border-color:var(--green);background:#dcfce7}
+.mi.bad{border-color:var(--red);background:#fee2e2}
+.mi.L{font-weight:700}
+#final{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.fbox{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:22px;padding:clamp(16px,4vh,34px) 36px;text-align:center;font-size:clamp(16px,2.8vh,22px);max-width:560px}
+.fbox .big{font-size:clamp(44px,9vh,76px);line-height:1}
+.fbox ul{list-style:none;margin:8px 0;padding:0}
+.fbox p{margin:6px 0}
+
+/* ---------- Construire ---------- */
+.btop{flex:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{background:#e2e8f7;border:0;border-radius:12px;padding:7px 12px;font-weight:700;color:var(--dark);font-size:15px}
+.tabs button.on{background:var(--dark);color:#fff}
+.lvl{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+.leadrow{flex:none;display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap}
+.lead{margin:0;font-size:clamp(14px,2.2vh,17px);color:#3b4766;flex:1 1 380px}
+.legend{display:flex;gap:8px;flex-wrap:wrap}
+.legend span{border-radius:999px;padding:2px 10px;font-weight:700;font-size:14px;border:2px solid #94a3b8;background:#fff}
+.legend .n1{background:#dbeafe;border-color:#2563eb}
+.legend .n2{background:#ffedd5;border-color:#f59e0b}
+.stage{position:relative;flex:1;min-height:170px;background:#fff;border:3px dashed #b8c6e6;border-radius:18px;background-image:radial-gradient(#e3eaf8 1.5px,transparent 1.5px);background-size:22px 22px;touch-action:none;overflow:hidden}
+.stage svg.links{position:absolute;top:0;left:0;width:100%;height:100%}
+.stage svg.links line{stroke:#94a3b8;stroke-width:5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.slot{position:absolute;width:112px;height:104px;transform:translate(-50%,-50%) scale(var(--s,1));border:3px dashed #9fb2db;background:rgba(235,242,255,.92);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;font-size:13px;color:#5a678a}
+.slot.ok{border:3px solid var(--green);background:#e7fbed}
+.slot.bad{border:3px solid var(--red);background:#fdeaea}
+.slot .q2{font-size:38px;font-weight:800;color:#9fb2db;line-height:1}
+.slot .hint{display:none;padding:0 4px;line-height:1.2}
+.stage.hints .slot .hint{display:block}
+.item{width:100px;display:flex;flex-direction:column;align-items:center;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font-size:14px;font-weight:700;text-align:center;line-height:1.1}
+.item svg{width:90px;height:72px;pointer-events:none}
+.item.ghost{position:fixed;transform:translate(-50%,-50%);pointer-events:none;z-index:999;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3));opacity:.95}
+.tray{flex:none;display:flex;gap:10px;flex-wrap:nowrap;overflow:hidden;background:#fff;border-radius:14px;padding:6px 10px;min-height:92px;border:2px solid var(--line);align-items:center}
+.tray .item{background:#f1f5fb;border-radius:12px;padding:4px 2px;flex:none}
+.ctl{flex:none;display:flex;gap:10px;align-items:stretch}
+.btns{display:flex;gap:8px;align-items:center;flex:none}
+.btns .btn{padding:8px 14px;font-size:clamp(14px,2.2vh,17px)}
+.msg{flex:1;margin:0;border-radius:12px;padding:6px 14px;font-size:clamp(14px,2.1vh,17px);background:#eef3ff;min-height:48px;max-height:26vh;overflow:auto;display:flex;align-items:center}
+.msg>div{width:100%}
+.msg.good{background:#dcfce7}
+.msg.warn{background:#fff1cf}
+.dev2{position:absolute;transform:translate(-50%,-50%) scale(var(--s,1));width:104px;display:flex;flex-direction:column;align-items:center;cursor:grab;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none;font-size:14px;font-weight:700;text-align:center;line-height:1.1;z-index:2;border-radius:12px;padding:3px}
+.dev2 svg{width:92px;height:74px;pointer-events:none}
+.dev2.n1{background:#eaf1ff;border:2px solid #2563eb}
+.dev2.n2{background:#fff3e0;border:2px solid #f59e0b}
+.dev2.sel{outline:4px solid var(--blue);background:#e8f0ff}
+.stage svg.cab2{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.stage svg.cab2 line.vis{stroke:#64748b;stroke-width:6;stroke-linecap:round}
+.stage svg.cab2 line.vis.ok{stroke:var(--green)}
+.stage svg.cab2 line.vis.bad{stroke:var(--red);stroke-dasharray:10 8}
+.stage svg.cab2 line.hit{stroke:transparent;stroke-width:22;pointer-events:stroke;cursor:pointer}
+
+/* ---------- Jeu ---------- */
+.gtop{flex:none;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
+.hud{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hud .chip{background:#fff;border-radius:999px;padding:3px 14px;font-weight:700;box-shadow:0 2px 8px rgba(30,58,138,.12);font-size:clamp(14px,2.2vh,17px);white-space:nowrap}
+.hud .btn{padding:5px 12px}
+.gwrap{position:relative;flex:1;min-height:160px;background:linear-gradient(#f8fbff,#e6effc);border:2px solid var(--line);border-radius:18px;overflow:hidden}
+#gsvg{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
+.gover{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(241,245,251,.92);z-index:5;padding:12px;text-align:center;overflow:auto}
+.gbox{background:#fff;border-radius:20px;padding:clamp(12px,3vh,24px) 26px;max-width:580px;box-shadow:0 10px 30px rgba(30,58,138,.2);font-size:clamp(14px,2.3vh,18px)}
+.gbox h3{font-size:clamp(20px,3.6vh,28px);margin-bottom:6px}
+.gbox ul{text-align:left;margin:8px 0 12px;padding-left:22px}
+.gbox li{margin-bottom:3px}
+.gbox .big{font-size:clamp(34px,7vh,56px);line-height:1}
+.gtoast{flex:none;min-height:40px;border-radius:12px;padding:7px 14px;font-weight:600;background:#eef3ff;font-size:clamp(14px,2.2vh,17px);display:flex;align-items:center}
+.gtoast.good{background:#dcfce7}
+.gtoast.bad{background:#fee2e2}
+.gq{flex:none;display:flex;gap:10px;height:clamp(84px,13vh,108px)}
+.gcard{flex:0 1 24%;min-width:0;background:#fff;border:3px solid var(--line);border-radius:14px;padding:6px 10px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:var(--ink)}
+.gcard.sel{border-color:var(--blue);box-shadow:0 0 0 4px #bfdbfe}
+.gcard .ghead{display:flex;gap:6px;align-items:center;font-size:clamp(13px,2vh,15px);white-space:nowrap;overflow:hidden}
+.gcard .gic{font-size:clamp(18px,3vh,24px)}
+.gcard .gtxt{font-size:clamp(13px,2.1vh,16px);line-height:1.2;font-weight:600}
+.gcard .bar{height:7px;background:#e2e8f7;border-radius:9px;overflow:hidden}
+.gcard .bar i{display:block;height:100%;background:#22c55e;width:100%}
+.gempty{color:#6b7896;align-self:center;font-size:clamp(14px,2.2vh,17px)}
+.gdev .hit{fill:transparent;cursor:pointer}
+.gdev:hover .hit{fill:rgba(37,99,235,.09)}
+.gdev.pulse .inner{animation:glow .5s ease-in-out 2}
+.glbl{font-size:20px;font-weight:700;fill:#1b2540;text-anchor:middle;pointer-events:none}
+.gcab{stroke:#94a3b8;stroke-width:6;stroke-linecap:round}
+.swring{fill:rgba(245,158,11,.12);stroke:#f59e0b;stroke-width:3;stroke-dasharray:8 7}
+.gmark{font-size:50px;font-weight:800;text-anchor:middle;animation:markUp .9s ease-out forwards;pointer-events:none}
+@keyframes markUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-36px)}}
+
+/* ---------- Verrous / progression ---------- */
+nav button.locked{opacity:.6}
+nav button.locked .ic{display:none}
+nav button.locked::before{content:'🔒 '}
+.card.locked .band{filter:grayscale(.9);opacity:.75}
+.card.locked .band::after{content:'🔒';position:absolute;right:12px;top:8px;font-size:clamp(22px,4vh,32px)}
+.card .go.need{display:block;background:#e2e8f7;color:var(--dark);border-radius:12px;font-size:clamp(12px,1.9vh,14px);line-height:1.25;padding:5px 10px}
+.tbar{flex:none;display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:4px 10px;font-size:14px;color:#6b7896}
+.tbar>span{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
+.tlink{background:none;border:0;color:#6b7896;text-decoration:underline;font-size:14px;padding:5px 8px}
+.dhead{flex:none;display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap}
+#unlockInfo{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-left:auto;font-size:clamp(12px,2vh,14px)}
+.uchip{background:#fff;border:2px solid var(--line);border-radius:999px;padding:1px 10px;font-weight:600;white-space:nowrap}
+.uchip.done{border-color:var(--green);background:#dcfce7}
+.ulab{font-weight:700;color:var(--dark)}
+.uok{font-weight:700;color:var(--green)}
+.bprog{margin-left:auto;background:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:14px;box-shadow:0 2px 8px rgba(30,58,138,.12)}
+.tabs button.done::after{content:' ✅'}
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:250;background:#1b2540;color:#fff;border-radius:14px;padding:10px 14px;display:flex;gap:12px;align-items:center;max-width:min(94vw,680px);box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:clamp(14px,2.2vh,17px);animation:fadein .25s}
+.toast button{background:#fff;color:var(--dark);border:0;border-radius:10px;padding:6px 12px;font-weight:700;white-space:nowrap}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(27,37,64,.55);z-index:300;display:flex;align-items:flex-start;justify-content:center;padding-top:min(14vh,90px)}
+.mbox{background:#fff;border-radius:20px;padding:20px 24px;width:min(92vw,420px);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.mbox p{margin:4px 0 12px}
+input{-webkit-user-select:text;user-select:text}
+#pwIn{width:100%;font-size:18px;padding:10px 12px;border:3px solid var(--line);border-radius:12px;font-family:inherit}
+.pwmsg{min-height:1.6em;margin:6px 0;color:var(--red);font-weight:600}
+
+/* ---------- Identité élève / récapitulatif ---------- */
+.who{flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;background:#fff;border-radius:16px;padding:7px 12px;box-shadow:0 3px 10px rgba(30,58,138,.1)}
+.who .wl{font-weight:700;color:var(--dark);white-space:nowrap}
+.who input{font-family:inherit;font-size:16px;padding:6px 10px;border:2px solid var(--line);border-radius:10px;min-width:0;flex:1 1 110px;max-width:190px}
+.who input:focus{outline:none;border-color:var(--blue)}
+.who .wsp{flex:1 1 0}
+.who .btn{padding:7px 12px;font-size:15px;white-space:nowrap}
+#recap{padding-top:3vh}
+.rbox{width:min(94vw,580px);max-height:94vh;overflow:auto}
+.rbox h3{margin:0 0 4px}
+.rwho{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:19px;margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+.rwho span{color:#6b7896;font-size:15px;align-self:center}
+.rwho .warn{color:var(--red)}
+.rrow{display:grid;grid-template-columns:130px 1fr;gap:4px 10px;padding:6px 0;border-bottom:1px solid #e8edf8;align-items:center}
+.rrow .rh{font-weight:800;color:var(--dark)}
+.rc{display:inline-block;background:#f1f5fd;border-radius:999px;padding:1px 9px;margin:2px 3px 2px 0;font-size:14px;font-weight:600;white-space:nowrap}
+.rc.y{background:#dcfce7}
+.rbox .row{margin-top:12px}
+.rnote{font-size:14px;color:#6b7896;margin:8px 0 0}
+@media print{
+  html,body{height:auto!important;overflow:visible!important;background:#fff!important}
+  header.top,main,#toast,#pwModal,#confModal,body>svg{display:none!important}
+  #recap:not([hidden]){display:block!important;position:static!important;background:none!important;padding:0!important}
+  .rbox{box-shadow:none!important;max-height:none!important;overflow:visible!important;width:auto!important}
+  .noprint{display:none!important}
+}
+.tabs button{padding:6px 10px;font-size:14px}
+
+/* ---------- Portrait / petits écrans (iPad vertical) ---------- */
+@media (max-width:900px){
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+  .disc{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
+  .btncol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .stepP{flex:none;overflow:visible}
+  .brand span{display:none}
+  #restartQuiz .txt{display:none}
+}
+@media (max-width:700px){
+  .opts{grid-template-columns:1fr}
+  .match{grid-template-columns:1fr}
+  nav button{padding:6px 9px;font-size:14px}
+}
+@media (max-height:640px){
+  .hero .deco{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Bibliothèque d'icônes -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-pc" viewBox="0 0 100 80">
+  <rect x="14" y="4" width="72" height="48" rx="5" fill="#1e3a8a"/>
+  <rect x="19" y="9" width="62" height="38" rx="2" fill="#7dd3fc"/>
+  <rect x="25" y="15" width="22" height="4" rx="2" fill="#fff" opacity=".8"/>
+  <rect x="25" y="23" width="40" height="3" rx="1.5" fill="#fff" opacity=".6"/>
+  <rect x="25" y="30" width="32" height="3" rx="1.5" fill="#fff" opacity=".6"/>
+  <rect x="44" y="52" width="12" height="10" fill="#94a3b8"/>
+  <rect x="30" y="62" width="40" height="7" rx="3.5" fill="#64748b"/>
+</symbol>
+<symbol id="i-server" viewBox="0 0 100 80">
+  <g fill="#475569"><rect x="22" y="3" width="56" height="22" rx="3"/><rect x="22" y="29" width="56" height="22" rx="3"/><rect x="22" y="55" width="56" height="22" rx="3"/></g>
+  <g fill="#4ade80"><circle cx="32" cy="14" r="2.6"/><circle cx="32" cy="40" r="2.6"/><circle cx="32" cy="66" r="2.6"/></g>
+  <g fill="#cbd5e1"><rect x="42" y="11.5" width="28" height="5" rx="2.5"/><rect x="42" y="37.5" width="28" height="5" rx="2.5"/><rect x="42" y="63.5" width="28" height="5" rx="2.5"/></g>
+</symbol>
+<symbol id="i-switch" viewBox="0 0 100 80">
+  <rect x="5" y="24" width="90" height="32" rx="6" fill="#f59e0b" stroke="#b45309" stroke-width="2.5"/>
+  <g fill="#78350f"><rect x="12" y="35" width="10" height="11" rx="2"/><rect x="26" y="35" width="10" height="11" rx="2"/><rect x="40" y="35" width="10" height="11" rx="2"/><rect x="54" y="35" width="10" height="11" rx="2"/><rect x="68" y="35" width="10" height="11" rx="2"/><rect x="82" y="35" width="8" height="11" rx="2"/></g>
+  <g fill="#fff"><circle cx="17" cy="30" r="2"/><circle cx="31" cy="30" r="2"/><circle cx="45" cy="30" r="2"/><circle cx="59" cy="30" r="2"/><circle cx="73" cy="30" r="2"/></g>
+</symbol>
+<symbol id="i-router" viewBox="0 0 100 80">
+  <g stroke="#065f46" stroke-width="4" stroke-linecap="round"><line x1="26" y1="42" x2="17" y2="10"/><line x1="74" y1="42" x2="83" y2="10"/></g>
+  <circle cx="17" cy="10" r="4.5" fill="#065f46"/><circle cx="83" cy="10" r="4.5" fill="#065f46"/>
+  <rect x="7" y="40" width="86" height="28" rx="7" fill="#34d399" stroke="#065f46" stroke-width="2.5"/>
+  <g fill="#fff"><circle cx="22" cy="54" r="3"/><circle cx="33" cy="54" r="3"/><circle cx="44" cy="54" r="3"/></g>
+  <rect x="62" y="49" width="24" height="10" rx="4" fill="#065f46"/>
+</symbol>
+<symbol id="i-printer" viewBox="0 0 100 80">
+  <rect x="27" y="4" width="46" height="28" rx="2" fill="#fff" stroke="#94a3b8" stroke-width="2.5"/>
+  <g stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"><line x1="34" y1="12" x2="66" y2="12"/><line x1="34" y1="20" x2="66" y2="20"/></g>
+  <rect x="9" y="28" width="82" height="34" rx="8" fill="#64748b" stroke="#334155" stroke-width="2.5"/>
+  <circle cx="79" cy="38" r="3.2" fill="#4ade80"/>
+  <rect x="22" y="50" width="56" height="26" rx="2" fill="#fff" stroke="#94a3b8" stroke-width="2.5"/>
+  <g stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"><line x1="30" y1="59" x2="70" y2="59"/><line x1="30" y1="67" x2="60" y2="67"/></g>
+</symbol>
+<symbol id="i-internet" viewBox="0 0 100 80">
+  <path d="M25 66 A16 16 0 0 1 22 34 A22 22 0 0 1 64 26 A18 18 0 0 1 82 44 A14 14 0 0 1 76 66 Z" fill="#bae6fd" stroke="#0369a1" stroke-width="3" stroke-linejoin="round"/>
+  <text x="50" y="55" text-anchor="middle" font-size="19" font-weight="700" fill="#0369a1" font-family="Segoe UI,Arial,sans-serif">www</text>
+</symbol>
+</defs></svg>
+
+<header class="top">
+  <button class="brand" data-go="accueil">🌐 <span>Le réseau local</span></button>
+  <nav>
+    <button data-go="accueil"><span class="ic">🏠</span> Accueil</button>
+    <button data-go="decouvrir"><span class="ic">🔍</span> Découvrir</button>
+    <button data-go="verifier"><span class="ic">✅</span> Vérifier</button>
+    <button data-go="construire"><span class="ic">🧩</span> Construire</button>
+    <button data-go="jeu"><span class="ic">🎮</span> Jeu</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ ACCUEIL ============ -->
+<section id="page-accueil" class="page active">
+  <div class="hero">
+    <h1>Comment les ordinateurs communiquent-ils ?</h1>
+    <p>Dans un collège, les ordinateurs, le serveur et Internet sont reliés entre eux. Découvre comment fonctionne un réseau, teste tes connaissances, construis le tien, puis joue !</p>
+    <div class="deco" id="heroIcons"></div>
+  </div>
+  <div class="who">
+    <span class="wl">👤 Je suis :</span>
+    <input id="wPre" placeholder="Prénom" autocomplete="off" autocapitalize="words" maxlength="30" aria-label="Prénom">
+    <input id="wNom" placeholder="Nom" autocomplete="off" autocapitalize="words" maxlength="30" aria-label="Nom">
+    <input id="wCls" placeholder="Classe (ex. 5eB)" autocomplete="off" maxlength="12" aria-label="Classe">
+    <span class="wsp"></span>
+    <button class="btn sec" id="wRecap">📋 Mon récapitulatif</button>
+    <button class="btn sec" id="wNew">🆕 Nouvel élève</button>
+  </div>
+  <div class="cards">
+    <button class="card c1" data-go="decouvrir">
+      <div class="band"><span class="num">1</span><span id="ci1"></span></div>
+      <div class="body"><h3>Découvrir le réseau</h3><p>Une animation pour comprendre le rôle des clients, du serveur, du switch et du routeur.</p><span class="go">Commencer →</span></div>
+    </button>
+    <button class="card c2" data-go="verifier">
+      <div class="band"><span class="num">2</span>❓✅</div>
+      <div class="body"><h3>Vérifier ce que j’ai compris</h3><p>Des QCM, des vrai-faux et un jeu d’association.</p><span class="go">Je teste mes connaissances →</span></div>
+    </button>
+    <button class="card c3" data-go="construire">
+      <div class="band"><span class="num">3</span><span id="ci3"></span></div>
+      <div class="body"><h3>Construire mon réseau</h3><p>Place les appareils et relie-les avec des câbles, en 7 niveaux.</p><span class="go">À moi de jouer →</span></div>
+    </button>
+    <button class="card c4" data-go="jeu">
+      <div class="band"><span class="num">4</span>🎮</div>
+      <div class="body"><h3>Jeu : sois le switch !</h3><p>Envoie chaque paquet au bon destinataire avant qu’il ne soit trop tard.</p><span class="go">Jouer →</span></div>
+    </button>
+  </div>
+  <div class="tbar">
+    <span id="tOff"><button class="tlink" id="tOpen">🔑 Espace professeur</button></span>
+    <span id="tOn" hidden>🔓 Mode professeur : toutes les pages sont ouvertes.
+      <button class="tlink" id="tLock">🔒 Reverrouiller</button>
+      <button class="tlink" id="tReset">↺ Remettre la progression à zéro</button></span>
+  </div>
+</section>
+
+<!-- ============ DECOUVRIR ============ -->
+<section id="page-decouvrir" class="page">
+  <div class="dhead"><h2>🔍 Découvrir le réseau local</h2><div id="unlockInfo"></div></div>
+  <div class="disc">
+    <div class="discL">
+      <div class="panel svgp">
+        <svg id="netsvg" viewBox="0 0 900 490" role="img" aria-label="Schéma d’un réseau local">
+          <g id="cables">
+            <line class="cable" id="c-pc1" x1="110" y1="90" x2="350" y2="235"/>
+            <line class="cable" id="c-pc2" x1="110" y1="235" x2="350" y2="235"/>
+            <line class="cable" id="c-pc3" x1="110" y1="380" x2="350" y2="235"/>
+            <line class="cable" id="c-server" x1="350" y1="235" x2="580" y2="100"/>
+            <line class="cable" id="c-router" x1="350" y1="235" x2="680" y2="370"/>
+            <line class="cable" id="c-internet" x1="680" y1="370" x2="835" y2="370"/>
+          </g>
+          <rect id="lanbox" x="30" y="14" width="650" height="468" rx="26" fill="#2563eb" fill-opacity=".05" stroke="#2563eb" stroke-width="3" stroke-dasharray="12 9" stroke-opacity=".5"/>
+          <text x="48" y="40" font-size="17" font-weight="700" fill="#2563eb" opacity=".85">Réseau local (LAN)</text>
+          <g class="dev" data-id="pc1" transform="translate(110,90)"><use href="#i-pc" x="-60" y="-48" width="120" height="96"/><text class="lbl" y="68">Client 1</text><text class="ip" y="89">192.168.1.11</text></g>
+          <g class="dev" data-id="pc2" transform="translate(110,235)"><use href="#i-pc" x="-60" y="-48" width="120" height="96"/><text class="lbl" y="68">Client 2</text><text class="ip" y="89">192.168.1.12</text></g>
+          <g class="dev" data-id="pc3" transform="translate(110,380)"><use href="#i-pc" x="-60" y="-48" width="120" height="96"/><text class="lbl" y="68">Client 3</text><text class="ip" y="89">192.168.1.13</text></g>
+          <g class="dev" data-id="switch" transform="translate(350,235)"><use href="#i-switch" x="-60" y="-48" width="120" height="96"/><text class="lbl" y="68">Switch</text></g>
+          <g class="dev" data-id="server" transform="translate(580,100)"><use href="#i-server" x="-60" y="-48" width="120" height="96"/><text class="lbl" y="68">Serveur du collège</text><text class="ip" y="89">192.168.1.20</text></g>
+          <g class="dev" data-id="router" transform="translate(680,370)"><use href="#i-router" x="-60" y="-48" width="120" height="96"/><text class="lbl" y="68">Routeur</text><text class="ip" y="89">192.168.1.1</text></g>
+          <g class="dev" data-id="internet" transform="translate(835,370)"><use href="#i-internet" x="-60" y="-48" width="120" height="96"/><text class="lbl" y="68">Internet</text><text class="ip" y="89">203.0.113.5</text></g>
+          <g id="packet" style="display:none"><circle r="15" fill="#ef4444" stroke="#fff" stroke-width="3"/><text text-anchor="middle" y="6" font-size="17">✉</text><g id="ptag"><rect id="prect" x="-68" y="-48" width="136" height="23" rx="11.5" fill="#fff" stroke="#ef4444" stroke-width="2.5"/><text id="ptxt" class="ptxt" text-anchor="middle" y="-32"></text></g></g>
+        </svg>
+      </div>
+      <div id="caption">Clique sur un bouton « Regarde circuler les messages » pour voir un message voyager dans le réseau.</div>
+    </div>
+
+    <div class="discR">
+      <div class="panel stepP">
+        <div class="dots" id="dots"></div>
+        <div class="step-title" id="stepTitle"></div>
+        <div class="step-text" id="stepText"></div>
+        <div class="row">
+          <button class="btn sec" id="prevStep">◀ Retour</button>
+          <button class="btn" id="nextStep">Suivant ▶</button>
+          <button class="btn sec" id="autoStep">⏵ Auto</button>
+        </div>
+      </div>
+      <div class="panel scenP">
+        <h3>📨 Regarde circuler les messages</h3>
+        <div class="btncol">
+          <button class="btn orange" data-scen="file">📁 Le client 1 demande un fichier au serveur</button>
+          <button class="btn orange" data-scen="web">🌍 Le client 2 va sur Internet</button>
+          <button class="btn orange" data-scen="msg">💬 Le client 3 écrit au client 1</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VERIFIER ============ -->
+<section id="page-verifier" class="page">
+  <div class="qtop">
+    <h2>✅ Vérifier ce que j’ai compris</h2>
+    <div class="scorebar"><span>Score :</span><b id="score">0 / 21</b><div class="pb"><div id="bar"></div></div><button class="btn sec" id="restartQuiz" aria-label="Recommencer">↻<span class="txt"> Recommencer</span></button></div>
+  </div>
+  <div class="qwrap" id="qwrap">
+    <div class="qhead"><span class="qtitle" id="qKind"></span><span id="qCount"></span><div class="qdots" id="qDots"></div></div>
+    <div class="qcard" id="qCard"></div>
+    <div class="qmatch" id="qMatch" hidden>
+      <p class="t">Clique sur un élément à gauche, puis sur son rôle à droite. Clique sur une association pour la défaire.</p>
+      <div class="match"><div id="mL"></div><div id="mR"></div></div>
+      <div class="row"><button class="btn green" id="mValid">Valider mes associations</button></div>
+    </div>
+    <div class="qfoot"><div class="exp idle" id="qExp"></div><button class="btn" id="qNext" disabled>Suivant ▶</button></div>
+  </div>
+  <div id="final" hidden></div>
+</section>
+
+<!-- ============ CONSTRUIRE ============ -->
+<section id="page-construire" class="page">
+  <div class="btop">
+    <h2>🧩 Construire mon réseau</h2>
+    <div class="tabs">
+      <button class="on" data-lvl="1">1 · Placer</button>
+      <button data-lvl="2">2 · Câbler</button>
+      <button data-lvl="3">3 · Autre plan</button>
+      <button data-lvl="4">4 · Deux réseaux</button>
+      <button data-lvl="5">5 · Avec Internet</button>
+      <button data-lvl="6">6 · Imprimante</button>
+      <button data-lvl="7">7 · Panne</button>
+    </div>
+    <span class="bprog" id="bProg"></span>
+  </div>
+
+  <div class="lvl" id="lvl1">
+    <div class="leadrow"><p class="lead">Les câbles sont déjà tracés. Glisse chaque appareil sur la bonne case : à toi de deviner qui va où !</p></div>
+    <div class="stage" id="stage1"></div>
+    <div class="tray" id="tray1"></div>
+    <div class="ctl">
+      <div class="btns"><button class="btn green" id="check1">Vérifier</button><button class="btn sec" id="hint1">💡 Indices</button><button class="btn sec" id="reset1">↻</button></div>
+      <div class="msg" id="msg1" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="lvl" id="lvl2" hidden>
+    <div class="leadrow"><p class="lead">Déplace les appareils comme tu veux. Pour tracer un câble : touche un premier appareil, puis un second. Pour enlever un câble : touche-le.</p></div>
+    <div class="stage" id="stage2"></div>
+    <div class="ctl">
+      <div class="btns"><button class="btn green" id="check2">Vérifier</button><button class="btn sec" id="reset2">↻</button></div>
+      <div class="msg" id="msg2" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="lvl" id="lvl3" hidden>
+    <div class="leadrow"><p class="lead">Même principe que le niveau 2, mais les appareils ne sont plus au même endroit : ne te fie pas à leur position, réfléchis à leur rôle !</p></div>
+    <div class="stage" id="stage3"></div>
+    <div class="ctl">
+      <div class="btns"><button class="btn green" id="check3">Vérifier</button><button class="btn sec" id="reset3">↻</button></div>
+      <div class="msg" id="msg3" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="lvl" id="lvl4" hidden>
+    <div class="leadrow">
+      <p class="lead">Conçois <b>deux réseaux locaux</b>, puis relie-les grâce à un <b>routeur</b>. Chaque réseau a son propre switch.</p>
+      <div class="legend"><span class="n1">🔵 Réseau local 1</span><span class="n2">🟠 Réseau local 2</span></div>
+    </div>
+    <div class="stage" id="stage4"></div>
+    <div class="ctl">
+      <div class="btns"><button class="btn green" id="check4">Vérifier</button><button class="btn sec" id="reset4">↻</button></div>
+      <div class="msg" id="msg4" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="lvl" id="lvl5" hidden>
+    <div class="leadrow">
+      <p class="lead">Dernier défi : relie <b>deux réseaux locaux</b> et <b>Internet</b>. Chaque réseau a son switch ; le routeur relie les deux switchs et donne accès à Internet.</p>
+      <div class="legend"><span class="n1">🔵 Réseau local 1</span><span class="n2">🟠 Réseau local 2</span></div>
+    </div>
+    <div class="stage" id="stage5"></div>
+    <div class="ctl">
+      <div class="btns"><button class="btn green" id="check5">Vérifier</button><button class="btn sec" id="reset5">↻</button></div>
+      <div class="msg" id="msg5" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="lvl" id="lvl6" hidden>
+    <div class="leadrow"><p class="lead">Au collège, une <b>imprimante</b> est partagée par toute la classe. Où faut-il la brancher ? Relie tous les appareils pour que les clients puissent <b>imprimer</b> et aller sur <b>Internet</b>.</p></div>
+    <div class="stage" id="stage6"></div>
+    <div class="ctl">
+      <div class="btns"><button class="btn green" id="check6">Vérifier</button><button class="btn sec" id="reset6">↻</button></div>
+      <div class="msg" id="msg6" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="lvl" id="lvl7" hidden>
+    <div class="leadrow"><p class="lead">🚨 <b>Panne !</b> Client 3 n’a plus de réseau, Client 2 ne trouve plus le serveur et personne ne peut aller sur Internet. Trouve les câbles <b>mal branchés ou absents</b> et répare le réseau.</p></div>
+    <div class="stage" id="stage7"></div>
+    <div class="ctl">
+      <div class="btns"><button class="btn green" id="check7">Vérifier</button><button class="btn sec" id="reset7">↻ Remettre la panne</button></div>
+      <div class="msg" id="msg7" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JEU ============ -->
+<section id="page-jeu" class="page">
+  <div class="gtop">
+    <h2>🎮 Sois le switch !</h2>
+    <div class="hud">
+      <span class="chip">Score <b id="gScore">0</b></span>
+      <span class="chip" id="gLvl">Niveau 1</span>
+      <span class="chip" id="gLives">❤️❤️❤️</span>
+      <span class="chip" id="gCombo" hidden></span>
+      <button class="btn sec" id="gPause" aria-label="Pause">⏸</button>
+      <button class="btn sec" id="gSound" aria-label="Son">🔊</button>
+    </div>
+  </div>
+  <div class="gwrap">
+    <svg id="gsvg" viewBox="0 0 900 460" role="img" aria-label="Scène du jeu : le switch au centre, des clients, un serveur et un routeur autour">
+      <g id="gscene"></g>
+      <g id="gfl"></g>
+    </svg>
+    <div class="gover" id="gStart">
+      <div class="gbox">
+        <h3>🎮 Sois le switch !</h3>
+        <p>Des paquets arrivent au switch… c’est toi qui décides où les envoyer !</p>
+        <ul>
+          <li>Le paquet <b>sélectionné</b> (bordure bleue) attend en bas de l’écran.</li>
+          <li>Touche l’<b>appareil</b> qui doit le recevoir.</li>
+          <li>Une erreur ou un paquet trop lent te fait perdre un ❤️.</li>
+        </ul>
+        <button class="btn green" id="gGo">▶ Jouer</button>
+      </div>
+    </div>
+    <div class="gover" id="gPauseOv" hidden>
+      <div class="gbox"><h3>⏸ Pause</h3><button class="btn green" id="gResume">▶ Reprendre</button></div>
+    </div>
+    <div class="gover" id="gEnd" hidden>
+      <div class="gbox" id="gEndBox"></div>
+    </div>
+  </div>
+  <div class="gtoast" id="gToast" aria-live="polite"></div>
+  <div class="gq" id="gQueue"></div>
+</section>
+
+</main>
+
+<div class="toast" id="toast" hidden></div>
+<div class="modal" id="recap" hidden>
+  <div class="mbox rbox" role="dialog" aria-modal="true" aria-labelledby="rcT">
+    <div id="rcBody"></div>
+    <div class="row noprint"><button class="btn green" id="rcPrint">🖨️ Imprimer / PDF</button><button class="btn sec" id="rcClose">Fermer</button></div>
+  </div>
+</div>
+<div class="modal" id="confModal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="cfT">
+    <h3 id="cfT">🆕 Nouvel élève ?</h3>
+    <p>Le nom, la progression et le travail en cours de l’élève actuel seront <b>effacés</b>, et les pages se verrouilleront de nouveau. Pense à noter son récapitulatif avant.</p>
+    <div class="row"><button class="btn green" id="cfOk">Oui, nouvel élève</button><button class="btn sec" id="cfNo">Annuler</button></div>
+  </div>
+</div>
+<div class="modal" id="pwModal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="pwT">
+    <h3 id="pwT">🔑 Espace professeur</h3>
+    <p>Entre le mot de passe pour ouvrir toutes les pages.</p>
+    <input id="pwIn" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Mot de passe">
+    <div class="pwmsg" id="pwMsg" aria-live="polite"></div>
+    <div class="row"><button class="btn green" id="pwOk">Déverrouiller</button><button class="btn sec" id="pwCancel">Annuler</button></div>
+  </div>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const icon=t=>`<svg viewBox="0 0 100 80"><use href="#i-${t}" width="100" height="80"/></svg>`;
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* Hauteur réelle de l'écran (fiable sur iPad / Safari) */
+function setH(){document.documentElement.style.setProperty('--H',window.innerHeight+'px');}
+setH();
+window.addEventListener('resize',setH);
+window.addEventListener('orientationchange',()=>setTimeout(setH,200));
+
+/* ---------- Navigation ---------- */
+const PAGES=['accueil','decouvrir','verifier','construire','jeu'];
+const onLeave={},onEnter={};
+let curPage='accueil';
+/* ---------- Progression et verrous ---------- */
+const cyrb53=(str,seed=0)=>{let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0);};
+const PW_HASH=8385478454276171;
+const PLABEL={verifier:'Vérifier ce que j’ai compris',construire:'Construire mon réseau',jeu:'Jeu'};
+const PNEED={
+  verifier:'Parcours les 8 étapes de « Découvrir » et regarde les 3 messages circuler jusqu’au bout.',
+  construire:'Obtiens au moins 90 % de bonnes réponses (19 sur 21) dans « Vérifier ce que j’ai compris ».',
+  jeu:'Réussis les 7 niveaux de « Construire mon réseau ».'
+};
+const PSHORT={verifier:'Regarde toute l’animation de « Découvrir »',construire:'Réussis « Vérifier » à 90 %',jeu:'Réussis les 7 niveaux de « Construire »'};
+
+let toastT=0;
+function toast(msg,act){
+  const t=$('#toast');t.innerHTML='';
+  const s=document.createElement('span');s.textContent=msg;t.appendChild(s);
+  if(act){const b=document.createElement('button');b.textContent=act.label;b.dataset.go=act.go;t.appendChild(b);}
+  t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true;},6500);
+}
+
+const Progress=(function(){
+  const KEY='reseau-progress-v1';
+  const blank=()=>({steps:false,scen:{file:false,web:false,msg:false},quiz:0,quizPts:0,quizTot:0,solved:[],game:{score:0,lvl:0}});
+  let S=blank(),teacher=false,last=null;
+  try{
+    const o=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(o){S.steps=!!o.steps;Object.keys(S.scen).forEach(k=>{S.scen[k]=!!(o.scen&&o.scen[k]);});S.quiz=+o.quiz||0;S.solved=Array.isArray(o.solved)?o.solved.filter(n=>n>=1&&n<=7):[];S.quizPts=+o.quizPts||0;S.quizTot=+o.quizTot||0;if(o.game){S.game.score=+o.game.score||0;S.game.lvl=+o.game.lvl||0;}}
+  }catch(e){}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
+  const WKEY='reseau-work-v1',resetL=[];let W={};
+  try{const o=JSON.parse(localStorage.getItem(WKEY)||'null');if(o&&typeof o==='object')W=o;}catch(e){}
+  const listeners=[];
+  const openBy=p=>p==='accueil'||p==='decouvrir'
+    ||(p==='verifier'&&S.steps&&S.scen.file&&S.scen.web&&S.scen.msg)
+    ||(p==='construire'&&S.quiz>=0.9)
+    ||(p==='jeu'&&[1,2,3,4,5,6,7].every(l=>S.solved.includes(l)));
+  const isOpen=p=>teacher||openBy(p);
+  function apply(announce){
+    const now={};PAGES.forEach(p=>{now[p]=isOpen(p);});
+    $$('nav button[data-go]').forEach(b=>b.classList.toggle('locked',!now[b.dataset.go]));
+    $$('.card[data-go]').forEach(c=>{
+      const p=c.dataset.go,go=$('.go',c);
+      if(go.dataset.orig===undefined)go.dataset.orig=go.textContent;
+      c.classList.toggle('locked',!now[p]);
+      go.classList.toggle('need',!now[p]);
+      go.textContent=now[p]?go.dataset.orig:'🔒 '+PSHORT[p];
+    });
+    $('#tOff').hidden=teacher;$('#tOn').hidden=!teacher;
+    if(announce&&last){
+      const opened=PAGES.filter(p=>now[p]&&!last[p]);
+      if(opened.length>1)toast('🔓 Toutes les pages sont débloquées !');
+      else if(opened.length===1)toast('🔓 « '+PLABEL[opened[0]]+' » est débloquée !',{go:opened[0],label:'Y aller →'});
+    }
+    last=now;
+    listeners.forEach(f=>f());
+    if(!now[curPage])show('accueil');
+  }
+  return {
+    isOpen,
+    get:()=>S,
+    solved:l=>S.solved.includes(l),
+    mark(kind,val,extra){
+      if(kind==='steps'){if(S.steps)return;S.steps=true;}
+      else if(kind==='scen'){if(S.scen[val])return;S.scen[val]=true;}
+      else if(kind==='solved'){if(S.solved.includes(val))return;S.solved.push(val);}
+      else if(kind==='quiz'){if(val<=S.quiz)return;S.quiz=val;S.quizPts=extra[0];S.quizTot=extra[1];}
+      else if(kind==='game'){const g=S.game;if(val.score<=g.score&&val.lvl<=g.lvl)return;g.score=Math.max(g.score,val.score);g.lvl=Math.max(g.lvl,val.lvl);}
+      save();apply(true);
+    },
+    unlockTeacher(pw){if(pw.length===12&&cyrb53(pw)===PW_HASH){teacher=true;apply(true);return true;}return false;},
+    lock(){teacher=false;last=null;apply(false);},
+    reset(){
+      S=blank();teacher=false;W={};save();
+      try{localStorage.removeItem(WKEY);localStorage.removeItem('reseau-best');}catch(e){}
+      last=null;apply(false);resetL.forEach(f=>f());
+    },
+    saveWork(k,v){W[k]=v;try{localStorage.setItem(WKEY,JSON.stringify(W));}catch(e){}},
+    work:k=>W[k],
+    onReset:f=>resetL.push(f),
+    onChange:f=>listeners.push(f),
+    denied:p=>toast('🔒 « '+PLABEL[p]+' » est verrouillée. '+PNEED[p]),
+    init:()=>apply(false)
+  };
+})();
+
+/* Espace professeur */
+(function(){
+  const modal=$('#pwModal'),inp=$('#pwIn'),msg=$('#pwMsg');
+  const open=()=>{inp.value='';msg.textContent='';modal.hidden=false;setTimeout(()=>inp.focus(),60);};
+  const close=()=>{modal.hidden=true;inp.blur();};
+  function submit(){
+    if(Progress.unlockTeacher(inp.value))close();
+    else{msg.textContent='❌ Mot de passe incorrect.';inp.select();}
+  }
+  $('#tOpen').onclick=open;
+  $('#pwCancel').onclick=close;
+  $('#pwOk').onclick=submit;
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();else if(e.key==='Escape')close();});
+  modal.addEventListener('pointerdown',e=>{if(e.target===modal)close();});
+  $('#tLock').onclick=()=>{Progress.lock();toast('🔒 Mode professeur désactivé : la progression de l’élève est conservée.');};
+  const rb=$('#tReset'),RL='↺ Remettre la progression à zéro';let armed=0,armT=0;
+  rb.onclick=()=>{
+    if(!armed){armed=1;rb.textContent='Confirmer la remise à zéro ?';clearTimeout(armT);armT=setTimeout(()=>{armed=0;rb.textContent=RL;},4000);}
+    else{armed=0;clearTimeout(armT);rb.textContent=RL;Progress.reset();toast('↺ Progression remise à zéro : les pages sont de nouveau verrouillées.');}
+  };
+})();
+
+/* Identité de l'élève */
+const Student=(function(){
+  const KEY='reseau-eleve-v1';let D={p:'',n:'',c:''};
+  try{const o=JSON.parse(localStorage.getItem(KEY)||'null');if(o&&typeof o==='object')D={p:String(o.p||'').slice(0,30),n:String(o.n||'').slice(0,30),c:String(o.c||'').slice(0,12)};}catch(e){}
+  const I={p:$('#wPre'),n:$('#wNom'),c:$('#wCls')};
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(D));}catch(e){}};
+  const fill=()=>{I.p.value=D.p;I.n.value=D.n;I.c.value=D.c;};
+  Object.keys(I).forEach(k=>{
+    I[k].addEventListener('input',()=>{D[k]=I[k].value;save();});
+    I[k].addEventListener('keydown',e=>{if(e.key==='Enter')I[k].blur();});
+  });
+  fill();
+  return {get:()=>D,clear(){D={p:'',n:'',c:''};save();fill();}};
+})();
+
+/* Récapitulatif */
+const LVNAMES=['Placer','Câbler','Autre plan','Deux réseaux','Avec Internet','Imprimante','Panne'];
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function openRecap(){
+  const S=Progress.get(),D=Student.get();
+  const nom=[D.p.trim(),D.n.trim().toUpperCase()].filter(Boolean).join(' ');
+  const cls=D.c.trim();
+  const date=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  const chip=(b,t)=>`<span class="rc ${b?'y':''}">${b?'✅':'○'} ${t}</span>`;
+  let q;
+  if(!S.quiz)q='<span class="rc">○ Pas encore de résultat</span>';
+  else{
+    const pc=Math.round(S.quiz*100);
+    q=`<b>${S.quizTot?S.quizPts+' / '+S.quizTot+' · ':''}${pc} %</b> `+(S.quiz>=.9?'<span class="rc y">✅ validé (90 % ou plus)</span>':'<span class="rc">objectif : 90 %</span>');
+  }
+  const nSteps=S.steps;
+  const lv=LVNAMES.map((n,i)=>chip(S.solved.includes(i+1),(i+1)+' · '+n)).join('');
+  const nb=S.solved.length;
+  const g=S.game.lvl>0?`Meilleur score : <b>${S.game.score}</b> · niveau atteint : <b>${S.game.lvl}</b>`:'<span class="rc">○ Pas encore joué</span>';
+  $('#rcBody').innerHTML=`<h3 id="rcT">📋 Récapitulatif — Le réseau local</h3>
+  <div class="rwho"><b${nom?'':' class="warn"'}>${nom?esc(nom):'⚠️ Nom non renseigné'}${cls?' · classe '+esc(cls):''}</b><span>${date}</span></div>
+  <div class="rrow"><div class="rh">🔍 Découvrir</div><div>${chip(nSteps,'8 étapes')}${chip(S.scen.file,'📁 fichier')}${chip(S.scen.web,'🌍 Internet')}${chip(S.scen.msg,'💬 message')}</div></div>
+  <div class="rrow"><div class="rh">✅ Vérifier</div><div>${q}</div></div>
+  <div class="rrow"><div class="rh">🧩 Construire</div><div>${lv}<br><b>${nb} / 7</b> niveaux réussis</div></div>
+  <div class="rrow"><div class="rh">🎮 Jeu</div><div>${g}</div></div>
+  ${nom?'':'<p class="rnote noprint">Écris ton prénom, ton nom et ta classe sur la page d’accueil pour qu’ils apparaissent ici.</p>'}`;
+  $('#recap').hidden=false;
+}
+(function(){
+  const rc=$('#recap');
+  $('#wRecap').onclick=openRecap;
+  $('#rcClose').onclick=()=>{rc.hidden=true;};
+  $('#rcPrint').onclick=()=>{try{window.print();}catch(e){}};
+  rc.addEventListener('pointerdown',e=>{if(e.target===rc)rc.hidden=true;});
+  const cf=$('#confModal');
+  $('#wNew').onclick=()=>{cf.hidden=false;};
+  $('#cfNo').onclick=()=>{cf.hidden=true;};
+  cf.addEventListener('pointerdown',e=>{if(e.target===cf)cf.hidden=true;});
+  $('#cfOk').onclick=()=>{
+    cf.hidden=true;Student.clear();Progress.reset();show('accueil');
+    toast('🆕 Nouvel élève : tout est remis à zéro.');
+  };
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){rc.hidden=true;cf.hidden=true;}});
+})();
+
+function show(p){
+  if(!PAGES.includes(p))p='accueil';
+  if(!Progress.isOpen(p)){
+    Progress.denied(p);
+    if(location.hash!=='#'+curPage)history.replaceState(null,'','#'+curPage);
+    return;
+  }
+  $('#toast').hidden=true;
+  if(onLeave[curPage])onLeave[curPage]();
+  curPage=p;
+  $$('.page').forEach(s=>s.classList.toggle('active',s.id==='page-'+p));
+  $$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===p));
+  if(location.hash!=='#'+p)history.replaceState(null,'','#'+p);
+  if(onEnter[p])onEnter[p]();
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go);});
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+
+/* icônes décoratives accueil */
+$('#heroIcons').innerHTML=['pc','pc','switch','server','router','internet'].map(icon).join('');
+$('#ci1').innerHTML=icon('switch');
+$('#ci3').innerHTML=icon('router');
+
+/* ---------- Page « Découvrir » : animation ---------- */
+(function(){
+const POS={pc1:[110,90],pc2:[110,235],pc3:[110,380],switch:[350,235],server:[580,100],router:[680,370],internet:[835,370]};
+const STEPS=[
+ {t:'Un réseau local, c’est quoi ?',d:'Un réseau local (ou LAN) est un ensemble d’appareils reliés entre eux dans un même lieu : un collège, une maison, une entreprise. Grâce au réseau, ils peuvent s’échanger des informations.',hl:[],cab:[]},
+ {t:'Les clients',d:'Ce sont les ordinateurs (ou tablettes, téléphones…) que nous utilisons. Un client fait des demandes : ouvrir un fichier, imprimer, aller sur un site web…',hl:['pc1','pc2','pc3'],cab:[]},
+ {t:'Le serveur du collège',d:'C’est un ordinateur très puissant, toujours allumé. Il garde en mémoire les fichiers de tout le monde et il répond aux demandes des clients.',hl:['server'],cab:[]},
+ {t:'Les câbles',d:'Les câbles (câbles Ethernet) transportent les informations d’un appareil à l’autre. Le Wi-Fi fait la même chose, mais sans fil.',hl:[],cab:['c-pc1','c-pc2','c-pc3','c-server','c-router','c-internet']},
+ {t:'L’adresse IP',d:'Pour qu’un message arrive au bon endroit, chaque appareil a sa propre adresse, comme chaque maison a la sienne : c’est l’adresse IP. Dans un réseau, deux appareils n’ont jamais la même adresse. Chaque message voyage avec l’adresse de son destinataire, comme une lettre.',hl:['pc1','pc2','pc3','server','router','internet'],cab:[]},
+ {t:'Le switch',d:'Le switch (ou commutateur) est comme un carrefour : il relie tous les appareils du réseau local. Quand il reçoit un message, il lit l’adresse du destinataire et l’envoie seulement au bon appareil.',hl:['switch'],cab:[]},
+ {t:'Le routeur',d:'Le routeur est la porte de sortie du réseau local : il relie notre réseau à d’autres réseaux, comme Internet. À la maison, la « box » regroupe un routeur et un modem. Le modem est un traducteur : il convertit les signaux de la ligne de l’opérateur (fibre, ADSL…) pour que les informations puissent voyager jusqu’à Internet.',hl:['router'],cab:[]},
+ {t:'Internet',d:'Internet est un immense réseau mondial, fait de millions de réseaux reliés entre eux. Grâce au routeur, notre réseau local peut y accéder. Chaque site y possède aussi sa propre adresse IP.',hl:['internet'],cab:[]}
+];
+const IPSTEP=4;
+const IPS={pc1:'192.168.1.11',pc2:'192.168.1.12',pc3:'192.168.1.13',server:'192.168.1.20',router:'192.168.1.1',internet:'203.0.113.5'};
+let step=0,autoT=null,runId=0;
+$('#dots').innerHTML=STEPS.map(()=>'<i></i>').join('');
+function applyStep(i){
+  step=i;const s=STEPS[i];$('#netsvg').classList.toggle('showip',i>=IPSTEP);const any=s.hl.length>0||s.cab.length>0;
+  $$('#netsvg .dev').forEach(g=>{const id=g.dataset.id;g.classList.toggle('hl',s.hl.includes(id));g.classList.toggle('dim',any&&!s.hl.includes(id));});
+  $$('#netsvg .cable').forEach(c=>{c.classList.toggle('hl',s.cab.includes(c.id));c.classList.toggle('dim',any&&!s.cab.includes(c.id));});
+  $('#stepTitle').textContent=(i+1)+'/'+STEPS.length+' · '+s.t;
+  $('#stepText').textContent=s.d;
+  $$('#dots i').forEach((d,k)=>d.classList.toggle('on',k===i));
+  $('#prevStep').disabled=i===0;
+  $('#nextStep').disabled=i===STEPS.length-1;
+  if(i===STEPS.length-1)Progress.mark('steps');
+}
+function stopAuto(){if(autoT){clearInterval(autoT);autoT=null;}$('#autoStep').textContent='⏵ Auto';}
+function hidePacket(){$('#packet').style.display='none';}
+$('#prevStep').onclick=()=>{stopAuto();runId++;hidePacket();applyStep(Math.max(0,step-1));};
+$('#nextStep').onclick=()=>{stopAuto();runId++;hidePacket();applyStep(Math.min(STEPS.length-1,step+1));};
+$('#autoStep').onclick=()=>{
+  if(autoT){stopAuto();return;}
+  runId++;hidePacket();
+  if(step>=STEPS.length-1)applyStep(0);
+  $('#autoStep').textContent='⏸ Pause';
+  autoT=setInterval(()=>{if(step>=STEPS.length-1){stopAuto();return;}applyStep(step+1);},6000);
+};
+function setHL(ids){$$('#netsvg .dev').forEach(g=>{g.classList.toggle('hl',ids.includes(g.dataset.id));g.classList.remove('dim');});$$('#netsvg .cable').forEach(c=>c.classList.remove('hl','dim'));}
+function movePacket(ids,color,to){
+  return new Promise(res=>{
+    const my=runId;const pts=ids.map(i=>POS[i]);const seg=[];let tot=0;
+    for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);seg.push(d);tot+=d;}
+    const ms=tot/0.14;const pk=$('#packet');pk.style.display='';pk.querySelector('circle').setAttribute('fill',color);$('#prect').setAttribute('stroke',color);$('#ptxt').textContent=to?'→ '+IPS[to]:'';$('#ptag').style.display=to?'':'none';
+    const t0=performance.now();
+    (function f(t){
+      if(my!==runId){res();return;}
+      const p=Math.min(1,(t-t0)/ms);let d=p*tot,i=0;
+      while(i<seg.length-1&&d>seg[i]){d-=seg[i];i++;}
+      const a=pts[i],b=pts[i+1],k=seg[i]?Math.min(1,d/seg[i]):1;
+      const px=a[0]+(b[0]-a[0])*k,py=a[1]+(b[1]-a[1])*k;
+      pk.setAttribute('transform',`translate(${px},${py})`);
+      $('#ptag').setAttribute('transform',`translate(${Math.max(72,Math.min(828,px))-px},${py<70?78:0})`);
+      if(p<1)requestAnimationFrame(f);else res();
+    })(t0);
+  });
+}
+const RED='#ef4444',GRN='#22c55e';
+const SCEN={
+ file:[
+  {cap:'① Le client 1 envoie sa demande. Il écrit sur le message l’adresse du destinataire : celle du serveur.',hl:['pc1'],mv:['pc1','switch'],col:RED,to:'server'},
+  {cap:'② Le switch lit l’adresse écrite sur le message : c’est celle du serveur. Il lui transmet la demande.',hl:['switch'],mv:['switch','server'],col:RED,to:'server'},
+  {cap:'③ Le serveur retrouve le fichier et prépare sa réponse.',hl:['server'],wait:1000},
+  {cap:'④ Le serveur renvoie le fichier, adressé au client 1. Le switch lit l’adresse et le transmet uniquement au client 1.',hl:['switch'],mv:['server','switch','pc1'],col:GRN,to:'pc1'},
+  {cap:'✅ Le client 1 a reçu son fichier. Les clients 2 et 3 n’ont rien reçu : le switch envoie chaque message à l’adresse indiquée.',hl:['pc1'],wait:300}
+ ],
+ web:[
+  {cap:'① Le client 2 veut afficher un site web. Il envoie sa demande avec l’adresse du site, située sur Internet.',hl:['pc2'],mv:['pc2','switch'],col:RED,to:'internet'},
+  {cap:'② Le switch lit l’adresse : elle n’est pas dans le réseau local. Il envoie la demande au routeur.',hl:['switch'],mv:['switch','router'],col:RED,to:'internet'},
+  {cap:'③ Le routeur est la porte de sortie : il envoie la demande vers Internet.',hl:['router'],mv:['router','internet'],col:RED,to:'internet'},
+  {cap:'④ Un serveur sur Internet répond avec la page web.',hl:['internet'],wait:1000},
+  {cap:'⑤ La réponse porte l’adresse du client 2. Elle revient par le routeur, puis par le switch, jusqu’au client 2.',hl:['router'],mv:['internet','router','switch','pc2'],col:GRN,to:'pc2'},
+  {cap:'✅ La page web s’affiche sur l’écran du client 2 !',hl:['pc2'],wait:300}
+ ],
+ msg:[
+  {cap:'① Le client 3 écrit un message pour le client 1. Il inscrit l’adresse du client 1 sur le message.',hl:['pc3'],mv:['pc3','switch'],col:RED,to:'pc1'},
+  {cap:'② Le switch lit l’adresse : c’est celle du client 1. Il ne l’envoie ni au client 2, ni au serveur.',hl:['switch'],mv:['switch','pc1'],col:RED,to:'pc1'},
+  {cap:'✅ Le client 1 a reçu le message. Voilà le rôle du switch : relier les appareils et diriger les messages grâce aux adresses.',hl:['pc1'],wait:300}
+ ]
+};
+async function runScen(name){
+  stopAuto();runId++;const my=runId;
+  setHL([]);$('#netsvg').classList.add('showip');
+  const list=SCEN[name];
+  for(let idx=0;idx<list.length;idx++){
+    const s=list[idx];
+    if(my!==runId)return;
+    setHL(s.hl||[]);$('#caption').textContent=s.cap;
+    if(idx===list.length-1)Progress.mark('scen',name);
+    const read=1500+s.cap.length*35;
+    await wait(800);
+    if(my!==runId)return;
+    if(s.mv){await movePacket(s.mv,s.col,s.to);if(my!==runId)return;}
+    await wait(read+(s.wait||0));
+  }
+  if(my===runId)hidePacket();
+}
+$$('[data-scen]').forEach(b=>b.onclick=()=>runScen(b.dataset.scen));
+onLeave.decouvrir=()=>{runId++;stopAuto();hidePacket();};
+function renderChips(){
+  const P=Progress.get(),el=$('#unlockInfo');
+  const ok=P.steps&&P.scen.file&&P.scen.web&&P.scen.msg;
+  const chip=(d,tx)=>`<span class="uchip${d?' done':''}">${d?'✅':'○'} ${tx}</span>`;
+  el.innerHTML=ok?'<span class="uok">🔓 « Vérifier » est débloquée</span>'
+    :'<span class="ulab">🔒 Pour débloquer « Vérifier » :</span>'+chip(P.steps,'les '+STEPS.length+' étapes')+chip(P.scen.file,'📁 fichier')+chip(P.scen.web,'🌍 Internet')+chip(P.scen.msg,'💬 message');
+}
+Progress.onChange(renderChips);renderChips();
+applyStep(0);
+})();
+
+/* ---------- Page « Vérifier » : questions une par une ---------- */
+(function(){
+const QCM=[
+ {q:'Comment appelle-t-on les ordinateurs utilisés par les élèves sur un réseau ?',o:['Des clients','Des serveurs','Des routeurs','Des câbles'],a:0,
+  e:'Les ordinateurs des utilisateurs sont des clients : ils font des demandes.',
+  w:[null,'Non : un serveur garde les fichiers et répond aux demandes, ce n’est pas l’ordinateur sur lequel travaille l’élève.','Non : un routeur n’est pas un ordinateur d’élève, c’est un appareil qui s’occupe de la communication avec l’extérieur.','Non : un câble n’est pas un ordinateur, il transporte seulement les informations.']},
+ {q:'Quel appareil relie entre eux les ordinateurs d’un même réseau local ?',o:['Le switch','Le routeur','Le clavier','L’écran'],a:0,
+  e:'Le switch est le carrefour du réseau local.',
+  w:[null,'Non : le routeur a un autre rôle, il s’occupe de la communication avec l’extérieur du réseau local.','Non : le clavier se branche sur un seul ordinateur, il ne relie pas les ordinateurs entre eux.','Non : l’écran affiche des images, il ne relie pas les ordinateurs entre eux.']},
+ {q:'Quel appareil permet au réseau local d’accéder à Internet ?',o:['Le switch','Le routeur','Le client','L’imprimante'],a:1,
+  e:'Le routeur est la porte de sortie vers Internet.',
+  w:['Non : le switch relie les appareils qui sont dans le même réseau local, il ne sort pas de ce réseau.',null,'Non : le client est un ordinateur qui fait des demandes, il ne donne pas accès à Internet aux autres.','Non : une imprimante imprime des documents, elle ne donne pas accès à Internet.']},
+ {q:'À quoi sert un serveur ?',o:['À stocker des fichiers et répondre aux demandes des clients','À relier le réseau à Internet','À afficher les pages web à l’écran','À brancher les câbles entre eux'],a:0,
+  e:'Le serveur garde les fichiers et répond aux clients.',
+  w:[null,'Non : relier le réseau à Internet est le travail d’un autre appareil, que tu as vu dans « Découvrir ».','Non : afficher une page à l’écran, c’est le travail de l’ordinateur de l’élève.','Non : un serveur est un ordinateur, il ne sert pas à brancher des câbles.']},
+ {q:'Quel câble est le plus utilisé pour relier les appareils d’un réseau local ?',o:['Le câble HDMI','Le câble Ethernet','Le câble d’antenne TV','Le câble d’alimentation'],a:1,
+  e:'Le câble Ethernet transporte les informations du réseau.',
+  w:['Non : le câble HDMI envoie l’image vers un écran, il ne relie pas des ordinateurs en réseau.',null,'Non : le câble d’antenne sert à recevoir la télévision.','Non : le câble d’alimentation apporte seulement l’électricité à l’appareil.']},
+ {q:'Que devient la communication entre les ordinateurs d’un réseau local si on débranche le switch ?',o:['Les ordinateurs ne peuvent plus s’échanger de messages','Rien ne change, ils communiquent comme avant','Les écrans des ordinateurs s’éteignent','Internet va plus vite'],a:0,
+  e:'Sans le switch, il n’y a plus de carrefour : les messages ne circulent plus entre les ordinateurs.',
+  w:[null,'Non : pense au rôle du switch dans le réseau. Que deviennent les messages sans lui ?','Non : les écrans sont alimentés par l’électricité, pas par le switch.','Non : enlever un appareil du réseau ne rend pas Internet plus rapide.']},
+ {q:'Comment appelle-t-on un réseau qui relie les ordinateurs d’un même lieu, comme un collège ?',o:['Un réseau local','Un réseau mondial','Un réseau électrique','Un réseau social'],a:0,
+  e:'Un réseau local relie les appareils d’un même lieu : une salle, un collège, une maison.',
+  w:[null,'Non : ce type de réseau s’étend bien au-delà d’un seul lieu, il relie des millions d’appareils.','Non : un réseau électrique transporte du courant, pas des informations entre des ordinateurs.','Non : un réseau social est un site ou une application, pas une façon de relier des appareils.']},
+ {q:'À quoi sert l’adresse IP d’un appareil ?',o:['À l’identifier, pour que les messages arrivent au bon endroit','À lui fournir de l’électricité','À le protéger des virus','À rendre le réseau plus rapide'],a:0,
+  e:'Comme l’adresse d’une maison, l’adresse IP permet de livrer chaque message au bon appareil.',
+  w:[null,'Non : l’électricité vient d’une prise, l’adresse IP n’a aucun rapport avec l’alimentation.','Non : l’adresse IP est un numéro d’identification, ce n’est pas un antivirus.','Non : un numéro d’adresse ne rend pas le réseau plus rapide. Pense à l’adresse d’une maison : à quoi sert-elle ?']}
+];
+const VF=[
+ {s:'Un switch envoie chaque message à l’appareil qui en est le destinataire.',a:true,e:'Vrai : le switch dirige chaque message vers le bon appareil.',h:'Relis l’étape du switch dans « Découvrir » : que fait-il des messages qu’il reçoit ?'},
+ {s:'Le routeur relie le réseau local à Internet.',a:true,e:'Vrai : c’est la porte de sortie du réseau.',h:'Pense à la porte de sortie du réseau local : quel appareil joue ce rôle ?'},
+ {s:'Un client fournit les fichiers aux autres ordinateurs du réseau.',a:false,e:'Faux : c’est le serveur qui stocke et fournit les fichiers. Le client, lui, fait des demandes.',h:'Demande-toi qui garde les fichiers sur le réseau, et qui les demande.'},
+ {s:'Internet est un réseau local.',a:false,e:'Faux : Internet est un réseau mondial qui relie des millions de réseaux.',h:'Compare la taille d’Internet avec celle du réseau d’un collège.'},
+ {s:'Les ordinateurs d’un réseau peuvent communiquer grâce aux câbles ou au Wi-Fi.',a:true,e:'Vrai : les informations circulent par câble ou sans fil.',h:'Pense à la façon dont ta tablette ou ton téléphone se connecte au réseau du collège.'},
+ {s:'Un serveur est éteint dès que personne ne s’en sert.',a:false,e:'Faux : un serveur reste allumé en permanence pour répondre quand on a besoin de lui.',h:'Imagine que tu demandes un fichier en pleine nuit : le serveur doit-il pouvoir te répondre ?'},
+ {s:'Une imprimante réseau peut être branchée au switch et utilisée par plusieurs ordinateurs.',a:true,e:'Vrai : une imprimante réseau se branche au switch comme un ordinateur, et toute la classe peut l’utiliser.',h:'Pense à l’appareil sur lequel on branche chaque ordinateur du réseau local : une imprimante peut-elle faire pareil ?'},
+ {s:'Pour aller sur Internet, un message n’a pas besoin de passer par le routeur.',a:false,e:'Faux : le routeur est la porte de sortie du réseau local, tout message vers Internet passe par lui.',h:'Regarde le message « page web » dans « Découvrir » : par quel appareil le message sort-il du collège ?'}
+];
+const PAIRS=[
+ {id:'c',l:'Client',r:'Il demande un fichier ou un service'},
+ {id:'s',l:'Serveur',r:'Il stocke les fichiers et répond aux demandes'},
+ {id:'sw',l:'Switch',r:'Il relie les appareils du réseau local entre eux'},
+ {id:'r',l:'Routeur',r:'Il relie le réseau local à Internet'},
+ {id:'cab',l:'Câble Ethernet',r:'Il transporte les informations entre les appareils'}
+];
+const COL=['#2563eb','#16a34a','#f59e0b','#db2777','#7c3aed'];
+const QS=[...QCM.map(q=>({k:'qcm',q})),...VF.map(v=>({k:'vf',v})),{k:'match'}];
+const TOTAL=QCM.length+VF.length+PAIRS.length;
+const KIND={qcm:'QCM',vf:'Vrai ou faux ?',match:'Associe chaque élément à son rôle'};
+let qi,res,score,curOK,curMissed,curState,fin;
+let pairs,sel,mRight,mLock,mBad,mFirst,mFinished;
+
+function saveQ(){
+  Progress.saveWork('quiz',{qi,res,score,curMissed,curOK,curState,fin,pairs,mRight:mRight.map(p=>p.id),mLock,mBad:[...mBad],mFirst,mFinished});
+}
+function restoreQuiz(){
+  try{
+    const w=Progress.work('quiz');if(!w)return false;
+    const ids=PAIRS.map(p=>p.id);
+    if(!(Number.isInteger(w.qi)&&w.qi>=0&&w.qi<QS.length&&Array.isArray(w.res)&&w.res.length===QS.length))return false;
+    if(!Array.isArray(w.mRight)||w.mRight.length!==ids.length||!ids.every(i=>w.mRight.includes(i)))return false;
+    qi=w.qi;
+    res=w.res.map(r=>(r==='ok'||r==='late'||(Number.isInteger(r)&&r>=0&&r<=PAIRS.length))?r:null);
+    score={qcm:+(w.score&&w.score.qcm)||0,vf:+(w.score&&w.score.vf)||0,app:+(w.score&&w.score.app)||0};
+    curMissed=!!w.curMissed;curOK=!!w.curOK;
+    curState=(w.curState&&Array.isArray(w.curState.wrong))?w.curState:{order:null,wrong:[],okIdx:null};
+    pairs={};Object.keys(w.pairs||{}).forEach(k=>{if(ids.includes(k)&&ids.includes(w.pairs[k]))pairs[k]=w.pairs[k];});
+    sel=null;mRight=w.mRight.map(id=>PAIRS.find(p=>p.id===id));
+    mLock={};Object.keys(w.mLock||{}).forEach(k=>{if(ids.includes(k)&&pairs[k]!==undefined)mLock[k]=true;});
+    mBad=new Set((w.mBad||[]).filter(k=>ids.includes(k)));
+    mFirst=!!w.mFirst;mFinished=!!w.mFinished;fin=!!w.fin;
+    $('#mValid').disabled=mFinished;
+    if(fin){finish();return true;}
+    $('#final').hidden=true;$('#qwrap').hidden=false;
+    renderQ(true);return true;
+  }catch(e){return false;}
+}
+function wrongMsg(s,idx){
+  const t=s.k==='qcm'?((s.q.w&&s.q.w[curState.order[idx]])||'Ce n’est pas la bonne réponse.'):'Ce n’est pas la bonne réponse. '+s.v.h;
+  return '❌ '+t+' Tu peux en choisir une autre, mais le point ne sera pas attribué.';
+}
+function restoreCard(card,s){
+  const btns=[...card.querySelectorAll('.opt')];
+  curState.wrong=(curState.wrong||[]).filter(i=>Number.isInteger(i)&&i>=0&&i<btns.length);
+  curState.wrong.forEach(i=>{btns[i].classList.add('bad');btns[i].disabled=true;});
+  curMissed=curState.wrong.length>0;
+  const expl=s.k==='qcm'?s.q.e:s.v.e;
+  if(curOK&&Number.isInteger(curState.okIdx)&&btns[curState.okIdx]){
+    btns.forEach(x=>{x.disabled=true;});
+    btns[curState.okIdx].classList.remove('bad');btns[curState.okIdx].classList.add('ok');
+    say((curMissed?'✔ C’est la bonne réponse, mais le point n’est pas attribué car tu t’es trompé avant. ':'✅ Bravo, 1 point ! ')+expl,curMissed?'warn':'ok');
+    $('#qNext').disabled=false;
+  }else{
+    curOK=false;
+    if(curMissed)say(wrongMsg(s,curState.wrong[curState.wrong.length-1]),'bad');
+  }
+}
+function buildQuiz(){
+  score={qcm:0,vf:0,app:0};res=QS.map(()=>null);qi=0;
+  pairs={};sel=null;mRight=shuffle(PAIRS);mLock={};mBad=new Set();mFirst=false;mFinished=false;fin=false;
+  $('#mValid').disabled=false;
+  $('#final').hidden=true;$('#qwrap').hidden=false;
+  renderQ();
+}
+function dots(){
+  $('#qDots').innerHTML=QS.map((s,i)=>{
+    const r=res[i];let c='';
+    if(r!==null)c=(r==='ok'||r===PAIRS.length)?'ok':'late';
+    if(i===qi)c+=' cur';
+    return `<i class="${c}"></i>`;
+  }).join('');
+}
+function updScore(){
+  const s=score.qcm+score.vf+score.app;
+  $('#score').textContent=s+' / '+TOTAL;
+  $('#bar').style.width=(res.filter(r=>r!==null).length/QS.length*100)+'%';
+}
+function say(txt,cls){const ex=$('#qExp');ex.hidden=false;ex.className='exp '+cls;ex.textContent=txt;}
+function wire(card,isOk,expl,key){
+  card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(curOK)return;
+    const idx=[...card.querySelectorAll('.opt')].indexOf(b);
+    if(isOk(b)){
+      curOK=true;curState.okIdx=idx;
+      card.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      b.classList.remove('bad');b.classList.add('ok');
+      if(!curMissed)score[key]++;
+      res[qi]=curMissed?'late':'ok';
+      say((curMissed?'✔ C’est la bonne réponse, mais le point n’est pas attribué car tu t’es trompé avant. ':'✅ Bravo, 1 point ! ')+expl,curMissed?'warn':'ok');
+      $('#qNext').disabled=false;
+      dots();updScore();
+    }else{
+      curMissed=true;curState.wrong.push(idx);b.classList.add('bad');b.disabled=true;
+      say(wrongMsg(QS[qi],idx),'bad');
+    }
+    saveQ();
+  });
+}
+function renderQ(restoring){
+  const s=QS[qi];
+  if(!restoring){curState={order:null,wrong:[],okIdx:null};curOK=false;curMissed=false;}
+  $('#qKind').textContent=KIND[s.k];
+  $('#qCount').textContent='Question '+(qi+1)+' / '+QS.length;
+  const ex=$('#qExp');ex.className='exp idle';ex.textContent='';
+  $('#qNext').disabled=true;
+  $('#qNext').textContent=qi===QS.length-1?'Voir mon résultat ▶':'Suivant ▶';
+  const card=$('#qCard');
+  if(s.k==='match'){
+    card.hidden=true;$('#qMatch').hidden=false;drawM();
+    if(restoring&&mFinished){
+      $('#mValid').disabled=true;$('#qNext').disabled=false;
+      if(score.app===PAIRS.length)say('✅ Toutes les associations sont justes du premier coup, bravo !','ok');
+      else say('✔ Toutes les associations sont maintenant justes. Tu obtiens '+score.app+' point(s) sur '+PAIRS.length+' : les associations corrigées ne rapportent pas de point.','warn');
+    }
+  }else{
+    $('#qMatch').hidden=true;card.hidden=false;
+    if(s.k==='qcm'){
+      const n=s.q.o.length;
+      if(!Array.isArray(curState.order)||curState.order.length!==n)curState.order=shuffle([...Array(n).keys()]);
+      const opts=curState.order.map(i=>({t:s.q.o[i],ok:i===s.q.a}));
+      card.innerHTML=`<p class="t">${s.q.q}</p><div class="opts">${opts.map((o,i)=>`<button class="opt" data-i="${i}">${o.t}</button>`).join('')}</div>`;
+      wire(card,b=>opts[+b.dataset.i].ok,s.q.e,'qcm');
+    }else{
+      card.innerHTML=`<p class="t">${s.v.s}</p><div class="opts"><button class="opt vf" data-v="1">✔ Vrai</button><button class="opt vf" data-v="0">✘ Faux</button></div>`;
+      wire(card,b=>(b.dataset.v==='1')===s.v.a,s.v.e,'vf');
+    }
+    if(restoring)restoreCard(card,s);
+  }
+  dots();updScore();saveQ();
+}
+$('#qNext').onclick=()=>{if(qi<QS.length-1){qi++;renderQ();}else finish();};
+function finish(){
+  fin=true;saveQ();
+  $('#qwrap').hidden=true;const f=$('#final');f.hidden=false;
+  const s=score.qcm+score.vf+score.app;const p=s/TOTAL;
+  Progress.mark('quiz',p,[s,TOTAL]);
+  const passed=p>=0.9;
+  f.innerHTML=`<div class="fbox"><div class="big">${passed?'🏆':p>=.6?'👍':'💪'}</div><h3>${passed?'Excellent !':p>=.6?'Bien joué !':'Continue !'}</h3><p>Tu as obtenu <b>${s} point(s) sur ${TOTAL}</b>.</p><ul><li>QCM : <b>${score.qcm} / ${QCM.length}</b></li><li>Vrai ou faux : <b>${score.vf} / ${VF.length}</b></li><li>Association : <b>${score.app} / ${PAIRS.length}</b></li></ul><p>${passed?'🔓 Tu as débloqué « Construire mon réseau » !':'Il faut au moins <b>90 %</b> ('+Math.ceil(TOTAL*.9)+' points sur '+TOTAL+') pour débloquer « Construire mon réseau ». Retourne voir « Découvrir » si besoin, puis recommence.'}</p><div class="row" style="justify-content:center"><button class="btn sec" id="fRestart">↻ Recommencer</button><button class="btn sec" id="fRecap">📋 Mon récapitulatif</button>${passed?'<button class="btn green" data-go="construire">🧩 Construire mon réseau</button>':''}</div></div>`;
+  $('#fRestart').onclick=buildQuiz;$('#fRecap').onclick=openRecap;
+  dots();
+}
+function drawM(){
+  $('#mL').innerHTML=PAIRS.map((p,i)=>{
+    let cls='mi L';
+    if(mLock[p.id])cls+=' ok';
+    else if(mBad.has(p.id))cls+=' bad';
+    else{if(sel===p.id)cls+=' sel';if(pairs[p.id]!==undefined)cls+=' paired';}
+    return `<button class="${cls}" style="--c:${COL[i]}" data-side="L" data-id="${p.id}">${p.l}</button>`;
+  }).join('');
+  $('#mR').innerHTML=mRight.map(p=>{
+    const owner=Object.keys(pairs).find(k=>pairs[k]===p.id);
+    let cls='mi R';
+    if(owner){
+      if(mLock[owner])cls+=' ok';
+      else if(mBad.has(owner))cls+=' bad';
+      else cls+=' paired';
+    }
+    const ci=owner?PAIRS.findIndex(x=>x.id===owner):0;
+    return `<button class="${cls}" style="--c:${COL[ci]}" data-side="R" data-id="${p.id}">${p.r}</button>`;
+  }).join('');
+  $$('#mL .mi,#mR .mi').forEach(b=>b.onclick=()=>mClick(b.dataset.side,b.dataset.id));
+}
+function mClick(side,id){
+  if(mFinished)return;
+  if(side==='L'){
+    if(mLock[id])return;
+    if(pairs[id]!==undefined){delete pairs[id];mBad.delete(id);sel=null;}
+    else sel=(sel===id?null:id);
+  }else{
+    const owner=Object.keys(pairs).find(k=>pairs[k]===id);
+    if(owner){if(mLock[owner])return;delete pairs[owner];mBad.delete(owner);}
+    else if(sel){pairs[sel]=id;sel=null;}
+  }
+  drawM();saveQ();
+}
+$('#mValid').onclick=()=>{
+  if(mFinished)return;
+  if(Object.keys(pairs).length<PAIRS.length){say('Associe d’abord les '+PAIRS.length+' éléments avant de valider.','bad');return;}
+  let n=0;const r={};
+  PAIRS.forEach(p=>{r[p.id]=pairs[p.id]===p.id;if(r[p.id])n++;});
+  if(!mFirst){mFirst=true;score.app=n;}
+  mBad=new Set();
+  PAIRS.forEach(p=>{if(r[p.id])mLock[p.id]=true;else mBad.add(p.id);});
+  drawM();
+  if(n===PAIRS.length){
+    mFinished=true;res[qi]=score.app;$('#mValid').disabled=true;$('#qNext').disabled=false;
+    if(score.app===PAIRS.length)say('✅ Toutes les associations sont justes du premier coup, bravo !','ok');
+    else say('✔ Toutes les associations sont maintenant justes. Tu obtiens '+score.app+' point(s) sur '+PAIRS.length+' : les associations corrigées ne rapportent pas de point.','warn');
+    dots();
+  }else{
+    say('❌ '+(PAIRS.length-n)+' association(s) en rouge ne sont pas bonnes. Clique dessus pour les défaire, refais-les, puis valide à nouveau (sans point pour celles-ci).','bad');
+  }
+  updScore();saveQ();
+};
+$('#restartQuiz').onclick=buildQuiz;
+Progress.onReset(buildQuiz);
+if(!restoreQuiz())buildQuiz();
+})();
+
+/* ---------- Page « Construire » ---------- */
+(function(){
+const NAME={pc:'Client',server:'Serveur',switch:'Switch',router:'Routeur',internet:'Internet'};
+let ready=false,curLvl=1;
+function saveBuild(){
+  if(!ready)return;
+  const cab={};CABS.forEach(c=>{cab[c.level]=c.snapshot();});
+  Progress.saveWork('build',{lvl:curLvl,l1:{place,order:order1.map(i=>i.id)},cab});
+}
+
+function fitStage(st){
+  if(!st||!st.clientWidth)return;
+  const s=Math.max(.5,Math.min(1,st.clientHeight/470,st.clientWidth/760));
+  st.style.setProperty('--s',s.toFixed(3));
+}
+
+/* Niveau 1 : glisser dans les cases */
+const SLOTS=[
+ {id:'a',x:11,y:17,type:'pc',h:'Un élève m’utilise'},
+ {id:'b',x:11,y:50,type:'pc',h:'Un élève m’utilise'},
+ {id:'c',x:11,y:83,type:'pc',h:'Un élève m’utilise'},
+ {id:'sw',x:38,y:50,type:'switch',h:'Je suis le carrefour du réseau'},
+ {id:'sv',x:66,y:18,type:'server',h:'Je garde les fichiers'},
+ {id:'ro',x:66,y:82,type:'router',h:'Je suis la porte de sortie'},
+ {id:'in',x:90,y:82,type:'internet',h:'Je suis le réseau du monde entier'}
+];
+const LINKS1=[['a','sw'],['b','sw'],['c','sw'],['sw','sv'],['sw','ro'],['ro','in']];
+const ITEMS=[{id:'i1',type:'pc'},{id:'i2',type:'pc'},{id:'i3',type:'pc'},{id:'i4',type:'server'},{id:'i5',type:'switch'},{id:'i6',type:'router'},{id:'i7',type:'internet'}];
+let place,order1;
+const MSG1='Glisse les appareils du bas vers les cases du schéma.';
+const setMsg=(id,cls,html)=>{const m=$(id);m.className='msg'+(cls?' '+cls:'');m.innerHTML='<div>'+html+'</div>';};
+function reset1(){
+  place={};ITEMS.forEach(i=>place[i.id]=null);order1=shuffle(ITEMS);
+  $('#stage1').classList.remove('hints');render1();setMsg('#msg1','',MSG1);saveBuild();
+}
+const itemHTML=it=>`<div class="item" data-item="${it.id}">${icon(it.type)}<span>${NAME[it.type]}</span></div>`;
+function render1(marks){
+  const S=Object.fromEntries(SLOTS.map(s=>[s.id,s]));
+  let h='<svg class="links" viewBox="0 0 100 100" preserveAspectRatio="none">'+LINKS1.map(([a,b])=>`<line x1="${S[a].x}" y1="${S[a].y}" x2="${S[b].x}" y2="${S[b].y}"/>`).join('')+'</svg>';
+  h+=SLOTS.map(s=>{
+    const it=ITEMS.find(i=>place[i.id]===s.id);
+    const cls='slot'+(marks&&marks[s.id]?' '+marks[s.id]:'');
+    return `<div class="${cls}" data-slot="${s.id}" style="left:${s.x}%;top:${s.y}%">${it?itemHTML(it):`<div class="q2">?</div><div class="hint">${s.h}</div>`}</div>`;
+  }).join('');
+  $('#stage1').innerHTML=h;
+  $('#tray1').innerHTML=order1.filter(i=>place[i.id]===null).map(itemHTML).join('')||'<span style="color:#6b7896">Tous les appareils sont placés.</span>';
+  fitStage($('#stage1'));
+}
+function assign(id,slot){
+  const old=place[id];
+  if(slot){const occ=ITEMS.find(i=>i.id!==id&&place[i.id]===slot);if(occ)place[occ.id]=old;}
+  place[id]=slot;
+  render1();saveBuild();
+  setMsg('#msg1','','Continue ! Appuie sur « Vérifier » quand tu as terminé.');
+}
+document.addEventListener('pointerdown',e=>{
+  const it=e.target.closest('#lvl1 .item');if(!it)return;
+  e.preventDefault();
+  const id=it.dataset.item;
+  const g=it.cloneNode(true);g.className='item ghost';document.body.appendChild(g);
+  const mv=ev=>{g.style.left=ev.clientX+'px';g.style.top=ev.clientY+'px';};mv(e);
+  it.style.opacity='.35';
+  const up=ev=>{
+    window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);
+    g.remove();
+    let best=null,bd=1e9;
+    $$('#stage1 .slot').forEach(s=>{
+      const r=s.getBoundingClientRect();
+      const inside=ev.clientX>=r.left-15&&ev.clientX<=r.right+15&&ev.clientY>=r.top-15&&ev.clientY<=r.bottom+15;
+      const d=Math.hypot(ev.clientX-(r.left+r.width/2),ev.clientY-(r.top+r.height/2));
+      if(inside&&d<bd){bd=d;best=s.dataset.slot;}
+    });
+    setTimeout(()=>assign(id,best),30); /* après la fin du geste tactile */
+  };
+  window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
+});
+$('#check1').onclick=()=>{
+  const marks={};let ok=0,empty=0;
+  SLOTS.forEach(s=>{
+    const it=ITEMS.find(i=>place[i.id]===s.id);
+    if(!it){marks[s.id]='';empty++;}
+    else if(it.type===s.type){marks[s.id]='ok';ok++;}
+    else marks[s.id]='bad';
+  });
+  render1(marks);
+  if(ok===SLOTS.length){Progress.mark('solved',1);setMsg('#msg1','good','🎉 Bravo, le réseau est complet ! Les clients et le serveur sont reliés au <b>switch</b>, le switch au <b>routeur</b>, et le routeur donne accès à <b>Internet</b>.');}
+  else setMsg('#msg1','warn',`${ok} appareil(s) bien placé(s) sur ${SLOTS.length}.`+(empty?` Il reste ${empty} case(s) vide(s).`:'')+' Les cases rouges sont à corriger : regarde bien qui est relié à qui !');
+};
+$('#hint1').onclick=()=>$('#stage1').classList.toggle('hints');
+$('#reset1').onclick=reset1;
+reset1();
+function restoreL1(w){
+  try{
+    if(!w||!w.l1)return;
+    const ids=ITEMS.map(i=>i.id),sl=SLOTS.map(s=>s.id);
+    const pl=w.l1.place,od=w.l1.order;
+    if(!pl||!Array.isArray(od)||od.length!==ids.length||!ids.every(i=>od.includes(i)))return;
+    const used=new Set(),np={};
+    for(const id of ids){
+      const v=pl[id];
+      if(v===null||v===undefined){np[id]=null;continue;}
+      if(!sl.includes(v)||used.has(v))return;
+      used.add(v);np[id]=v;
+    }
+    place=np;order1=od.map(id=>ITEMS.find(i=>i.id===id));render1();
+  }catch(e){}
+}
+
+/* Niveaux 2 à 5 : tracer les câbles */
+const key=(a,b)=>[a,b].sort().join('|');
+const CABS=[];
+
+function mkHint(devs){
+  const T=Object.fromEntries(devs.map(d=>[d.id,d.type])),N=Object.fromEntries(devs.map(d=>[d.id,d.net||0]));
+  return k=>{
+    const [a,b]=k.split('|');const t=[T[a],T[b]].sort().join('+');
+    const diff=N[a]&&N[b]&&N[a]!==N[b];
+    if(t.includes('internet'))return 'Seul le routeur est relié à Internet.';
+    if(t.includes('printer')){
+      if(t.includes('router'))return 'Une imprimante réseau ne se branche pas directement sur le routeur : elle passe d’abord par le switch.';
+      return 'Une imprimante réseau se branche sur le switch, comme les autres appareils du réseau : pas directement sur un ordinateur.';
+    }
+    if(t==='switch+switch')return 'Deux réseaux locaux ne se relient pas directement par leurs switchs : il faut passer par le routeur.';
+    if((t==='pc+switch'||t==='server+switch')&&diff)return 'Cet appareil appartient à l’autre réseau local : il se relie au switch de son propre réseau.';
+    if((t==='pc+pc'||t==='pc+server')&&diff)return 'Deux réseaux locaux différents ne se relient pas directement : leurs switchs passent par le routeur.';
+    if(t==='pc+pc'||t==='pc+server')return 'Deux appareils d’un même réseau passent par leur switch : ils ne se relient pas directement.';
+    if(t==='pc+router'||t==='router+server')return 'Un client ou un serveur passe d’abord par le switch de son réseau avant d’atteindre le routeur.';
+    return 'Ce câble n’est pas utile dans ce réseau.';
+  };
+}
+
+function makeCable(cfg){
+  const st=$(cfg.stage);
+  const REQ=cfg.req.map(([a,b])=>key(a,b));
+  const hint=mkHint(cfg.devs);
+  let devs,links,sel,marks;
+  function place(){
+    devs.forEach(d=>{const el=st.querySelector(`.dev2[data-id="${d.id}"]`);if(el){el.style.left=d.x+'%';el.style.top=d.y+'%';el.classList.toggle('sel',sel===d.id);}});
+  }
+  function draw(){
+    const svg=st.querySelector('svg.cab2');if(!svg||!devs||!st.clientWidth)return;
+    const W=st.clientWidth,H=st.clientHeight;
+    const D=Object.fromEntries(devs.map(d=>[d.id,d]));
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    let h='';
+    links.forEach(k=>{
+      const [a,b]=k.split('|');if(!D[a]||!D[b])return;
+      const x1=D[a].x/100*W,y1=D[a].y/100*H,x2=D[b].x/100*W,y2=D[b].y/100*H;
+      h+=`<line class="vis ${marks[k]||''}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><line class="hit" data-k="${k}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+    });
+    svg.innerHTML=h;
+    svg.querySelectorAll('line.hit').forEach(l=>l.addEventListener('click',()=>{links.delete(l.dataset.k);marks={};draw();saveBuild();}));
+  }
+  function refresh(){fitStage(st);draw();}
+  function reset(){
+    devs=cfg.devs.map(d=>({...d}));links=new Set((cfg.init||[]).map(([a,b])=>key(a,b)));sel=null;marks={};
+    st.innerHTML='<svg class="cab2"></svg>'+devs.map(d=>`<div class="dev2${d.net?' n'+d.net:''}" data-id="${d.id}">${icon(d.type)}<span>${d.label}</span></div>`).join('');
+    place();refresh();
+    setMsg(cfg.msg,'',cfg.start);saveBuild();
+  }
+  st.addEventListener('pointerdown',e=>{
+    const el=e.target.closest('.dev2');if(!el)return;
+    e.preventDefault();
+    const d=devs.find(x=>x.id===el.dataset.id);
+    const sx=e.clientX,sy=e.clientY,ox=d.x,oy=d.y;let moved=false;
+    const mv=ev=>{
+      const dx=ev.clientX-sx,dy=ev.clientY-sy;
+      if(!moved&&Math.hypot(dx,dy)<6)return;
+      moved=true;
+      d.x=Math.max(8,Math.min(92,ox+dx/st.clientWidth*100));
+      d.y=Math.max(10,Math.min(90,oy+dy/st.clientHeight*100));
+      place();draw();
+    };
+    const up=()=>{
+      window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);
+      if(!moved){
+        marks={};
+        if(sel===null)sel=d.id;
+        else if(sel===d.id)sel=null;
+        else{const k=key(sel,d.id);if(links.has(k))links.delete(k);else links.add(k);sel=null;}
+        place();draw();
+      }
+      saveBuild();
+    };
+    window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
+  });
+  $(cfg.check).onclick=()=>{
+    marks={};let good=0;const extra=[];
+    links.forEach(k=>{if(REQ.includes(k)){marks[k]='ok';good++;}else{marks[k]='bad';extra.push(k);}});
+    const missing=REQ.length-good;
+    draw();
+    if(!missing&&!extra.length){Progress.mark('solved',cfg.level);setMsg(cfg.msg,'good',cfg.win);return;}
+    let t=`✅ ${good} câble(s) correct(s).`;
+    if(missing)t+=` ❓ Il manque ${missing} câble(s).`;
+    if(extra.length)t+=` ❌ ${extra.length} câble(s) en trop (en rouge).`+[...new Set(extra.map(hint))].map(x=>`<br>→ ${x}`).join('');
+    setMsg(cfg.msg,'warn',t);
+  };
+  function snapshot(){
+    const pos={};devs.forEach(d=>{pos[d.id]=[+(+d.x).toFixed(2),+(+d.y).toFixed(2)];});
+    return {pos,links:[...links]};
+  }
+  function restore(sn){
+    try{
+      if(!sn||!sn.pos)return;
+      const ids=devs.map(d=>d.id);
+      devs.forEach(d=>{const q=sn.pos[d.id];if(Array.isArray(q)&&isFinite(q[0])&&isFinite(q[1])){d.x=Math.max(8,Math.min(92,+q[0]));d.y=Math.max(10,Math.min(90,+q[1]));}});
+      links=new Set((Array.isArray(sn.links)?sn.links:[]).filter(k=>typeof k==='string'&&k.split('|').length===2&&k.split('|').every(i=>ids.includes(i))));
+      marks={};sel=null;place();refresh();
+    }catch(e){}
+  }
+  $(cfg.reset).onclick=reset;
+  reset();
+  CABS.push({refresh,level:cfg.level,snapshot,restore,reset});
+}
+
+/* Niveaux 2 et 3 : mêmes appareils, dispositions différentes */
+const lay=P=>[['pc1','pc','Client 1'],['pc2','pc','Client 2'],['pc3','pc','Client 3'],['server','server','Serveur'],['switch','switch','Switch'],['router','router','Routeur'],['internet','internet','Internet']]
+  .map(([id,type,label])=>({id,type,label,x:P[id][0],y:P[id][1]}));
+const P2={pc1:[14,20],pc2:[36,80],pc3:[84,22],server:[58,16],switch:[12,62],router:[62,56],internet:[86,82]};
+const P3={pc1:[84,15],pc2:[88,50],pc3:[72,84],server:[14,86],switch:[56,45],router:[30,60],internet:[10,18]};
+const REQ23=[['pc1','switch'],['pc2','switch'],['pc3','switch'],['server','switch'],['router','switch'],['internet','router']];
+const WIN23='🎉 Bravo, ton réseau est parfait ! Les 3 clients et le serveur sont reliés au <b>switch</b>, le switch au <b>routeur</b>, et le routeur à <b>Internet</b>.';
+makeCable({level:2,stage:'#stage2',msg:'#msg2',check:'#check2',reset:'#reset2',devs:lay(P2),req:REQ23,win:WIN23,start:'Relie chaque appareil à celui qui convient.'});
+makeCable({level:3,stage:'#stage3',msg:'#msg3',check:'#check3',reset:'#reset3',devs:lay(P3),req:REQ23,win:WIN23,start:'Les appareils ont changé de place : relie-les correctement.'});
+
+/* Niveau 4 : deux réseaux locaux reliés par un routeur */
+makeCable({level:4,stage:'#stage4',msg:'#msg4',check:'#check4',reset:'#reset4',
+  devs:[
+   {id:'pc1',type:'pc',label:'Client 1',net:1,x:14,y:20},
+   {id:'pc2',type:'pc',label:'Client 2',net:1,x:80,y:78},
+   {id:'sw1',type:'switch',label:'Switch 1',net:1,x:50,y:18},
+   {id:'pc3',type:'pc',label:'Client 3',net:2,x:84,y:30},
+   {id:'server',type:'server',label:'Serveur',net:2,x:16,y:66},
+   {id:'sw2',type:'switch',label:'Switch 2',net:2,x:52,y:78},
+   {id:'router',type:'router',label:'Routeur',net:0,x:46,y:48}
+  ],
+  req:[['pc1','sw1'],['pc2','sw1'],['pc3','sw2'],['server','sw2'],['router','sw1'],['router','sw2']],
+  win:'🎉 Bravo ! Chaque réseau local a son <b>switch</b>, et le <b>routeur</b> relie les deux switchs : les appareils des deux réseaux peuvent communiquer.',
+  start:'Relie les appareils bleus à leur switch, les appareils orange au leur, puis relie les deux réseaux avec le routeur.'});
+
+/* Niveau 5 : deux réseaux locaux + Internet */
+makeCable({level:5,stage:'#stage5',msg:'#msg5',check:'#check5',reset:'#reset5',
+  devs:[
+   {id:'pc1',type:'pc',label:'Client 1',net:1,x:12,y:18},
+   {id:'pc2',type:'pc',label:'Client 2',net:1,x:30,y:84},
+   {id:'pc3',type:'pc',label:'Client 3',net:1,x:88,y:50},
+   {id:'sw1',type:'switch',label:'Switch 1',net:1,x:70,y:50},
+   {id:'pc4',type:'pc',label:'Client 4',net:2,x:88,y:84},
+   {id:'server',type:'server',label:'Serveur',net:2,x:12,y:84},
+   {id:'sw2',type:'switch',label:'Switch 2',net:2,x:52,y:16},
+   {id:'router',type:'router',label:'Routeur',net:0,x:30,y:52},
+   {id:'internet',type:'internet',label:'Internet',net:0,x:50,y:86}
+  ],
+  req:[['pc1','sw1'],['pc2','sw1'],['pc3','sw1'],['pc4','sw2'],['server','sw2'],['router','sw1'],['router','sw2'],['internet','router']],
+  win:'🏆 Bravo, tu as réussi le dernier défi ! Chaque réseau local a son <b>switch</b>, le <b>routeur</b> relie les deux switchs, et c’est aussi lui qui donne accès à <b>Internet</b>.',
+  start:'Relie les appareils bleus à leur switch, les orange au leur, puis connecte le routeur aux deux switchs et à Internet.'});
+
+/* Niveau 6 : une imprimante réseau */
+makeCable({level:6,stage:'#stage6',msg:'#msg6',check:'#check6',reset:'#reset6',
+  devs:[
+   {id:'pc1',type:'pc',label:'Client 1',x:12,y:18},
+   {id:'pc2',type:'pc',label:'Client 2',x:12,y:82},
+   {id:'pc3',type:'pc',label:'Client 3',x:52,y:86},
+   {id:'printer',type:'printer',label:'Imprimante',x:88,y:84},
+   {id:'switch',type:'switch',label:'Switch',x:50,y:46},
+   {id:'router',type:'router',label:'Routeur',x:78,y:42},
+   {id:'internet',type:'internet',label:'Internet',x:90,y:14}
+  ],
+  req:[['pc1','switch'],['pc2','switch'],['pc3','switch'],['printer','switch'],['router','switch'],['internet','router']],
+  win:'🖨️ Bravo ! L’imprimante se branche sur le <b>switch</b>, comme un ordinateur : tous les clients du réseau peuvent l’utiliser, et le <b>routeur</b> leur donne accès à Internet.',
+  start:'Relie chaque appareil à celui qui convient, sans oublier l’imprimante.'});
+
+/* Niveau 7 : réparer une panne */
+makeCable({level:7,stage:'#stage7',msg:'#msg7',check:'#check7',reset:'#reset7',
+  devs:[
+   {id:'pc1',type:'pc',label:'Client 1',x:12,y:20},
+   {id:'pc2',type:'pc',label:'Client 2',x:16,y:80},
+   {id:'pc3',type:'pc',label:'Client 3',x:52,y:86},
+   {id:'server',type:'server',label:'Serveur',x:88,y:78},
+   {id:'switch',type:'switch',label:'Switch',x:46,y:44},
+   {id:'router',type:'router',label:'Routeur',x:76,y:40},
+   {id:'internet',type:'internet',label:'Internet',x:90,y:14}
+  ],
+  init:[['pc1','switch'],['server','switch'],['router','switch'],['pc2','router']],
+  req:[['pc1','switch'],['pc2','switch'],['pc3','switch'],['server','switch'],['router','switch'],['internet','router']],
+  win:'🛠️ Bravo, réseau réparé ! Client 2 était branché sur le routeur au lieu du <b>switch</b>, Client 3 n’était relié à rien, et le câble entre le <b>routeur</b> et <b>Internet</b> était débranché.',
+  start:'Observe le réseau : quels câbles sont mal placés ou absents ? Touche un câble pour l’enlever, touche deux appareils pour en relier.'});
+
+function refreshBuild(){fitStage($('#stage1'));CABS.forEach(c=>c.refresh());}
+function renderTabs(){
+  $$('.tabs button').forEach(b=>{b.classList.toggle('done',Progress.solved(+b.dataset.lvl));});
+  const n7=[1,2,3,4,5,6,7].filter(l=>Progress.solved(l)).length;
+  $('#bProg').textContent=n7===7?'🎮 Les 7 niveaux sont réussis : le jeu est débloqué !':'Réussis les 7 niveaux pour débloquer le jeu : '+n7+' / 7';
+}
+Progress.onChange(renderTabs);renderTabs();
+
+/* Onglets des niveaux */
+function selectLevel(n){
+  curLvl=n;
+  $$('.tabs button').forEach(x=>x.classList.toggle('on',x.dataset.lvl===String(n)));
+  for(let k=1;k<=7;k++)$('#lvl'+k).hidden=k!==n;
+  refreshBuild();saveBuild();
+}
+$$('.tabs button').forEach(b=>b.onclick=()=>selectLevel(+b.dataset.lvl));
+/* reprise du travail en cours */
+(function(){
+  const w=Progress.work('build');
+  if(w){
+    restoreL1(w);
+    CABS.forEach(c=>c.restore(w.cab&&w.cab[c.level]));
+    const L=+w.lvl;if(L>=1&&L<=7)curLvl=L;
+  }
+  ready=true;
+  selectLevel(curLvl);
+})();
+Progress.onReset(()=>{reset1();CABS.forEach(c=>c.reset());selectLevel(1);});
+onEnter.construire=refreshBuild;
+window.addEventListener('resize',refreshBuild);
+window.addEventListener('orientationchange',()=>setTimeout(refreshBuild,250));
+if(window.ResizeObserver)new ResizeObserver(refreshBuild).observe($('main'));
+})();
+
+/* ---------- Page « Jeu » : Sois le switch ! ---------- */
+(function(){
+const NS='http://www.w3.org/2000/svg';
+const POSG={lea:[110,85],tom:[110,230],ines:[110,375],server:[780,95],router:[700,370],sw:[450,230]};
+const NAMES={lea:'Léa',tom:'Tom',ines:'Inès',server:'Serveur',router:'Routeur'};
+const FROM={lea:'Léa',tom:'Tom',ines:'Inès',server:'Serveur',router:'Internet'};
+const CLIENTS=['lea','tom','ines'];
+const HINT='👆 Touche l’appareil qui doit recevoir le paquet sélectionné (bordure bleue).';
+
+/* scène */
+(function drawScene(){
+  let h='';
+  [['lea','sw'],['tom','sw'],['ines','sw'],['server','sw'],['router','sw']].forEach(([a,b])=>{h+=`<line class="gcab" x1="${POSG[a][0]}" y1="${POSG[a][1]}" x2="${POSG[b][0]}" y2="${POSG[b][1]}"/>`;});
+  h+=`<line class="gcab" x1="700" y1="370" x2="838" y2="370"/>`;
+  h+=`<g transform="translate(838,370)"><use href="#i-internet" x="-48" y="-38" width="96" height="77"/><text class="glbl" y="62">Internet</text></g>`;
+  h+=`<g transform="translate(450,230)"><circle class="swring" r="84"/><use href="#i-switch" x="-72" y="-58" width="144" height="115"/><text class="glbl" y="88">Switch (c’est toi !)</text></g>`;
+  const dev=(id,ic)=>`<g class="gdev" data-id="${id}" transform="translate(${POSG[id][0]},${POSG[id][1]})"><rect class="hit" x="-72" y="-62" width="144" height="140" rx="20"/><g class="inner"><use href="#i-${ic}" x="-48" y="-40" width="96" height="77"/></g><text class="glbl" y="62">${NAMES[id]}</text></g>`;
+  h+=dev('lea','pc')+dev('tom','pc')+dev('ines','pc')+dev('server','server')+dev('router','router');
+  $('#gscene').innerHTML=h;
+})();
+
+const gfl=$('#gfl');
+const st={run:false,pause:false,over:false,score:0,lives:3,level:1,combo:0,ok:0,spawn:0,queue:[],fly:0,sel:null,uid:0};
+window.__game=st; /* utile pour les tests */
+let best=Progress.get().game.score;try{best=Math.max(best,+localStorage.getItem('reseau-best')||0);}catch(e){}
+Progress.onReset(()=>{best=0;});
+let flights=[],raf=0,last=0,sayT=0;
+
+/* son */
+let actx=null,soundOn=true;
+function beep(f,d,type,v){
+  if(!soundOn||!actx)return;
+  try{const o=actx.createOscillator(),g=actx.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.value=v||.07;o.connect(g);g.connect(actx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.stop(actx.currentTime+d);}catch(e){}
+}
+$('#gSound').onclick=()=>{soundOn=!soundOn;$('#gSound').textContent=soundOn?'🔊':'🔇';};
+
+/* messages */
+function say(txt,cls){
+  const t=$('#gToast');t.textContent=txt;t.className='gtoast'+(cls?' '+cls:'');
+  clearTimeout(sayT);
+  if(txt!==HINT)sayT=setTimeout(()=>say(HINT,''),4500);
+}
+function updHUD(){
+  $('#gScore').textContent=st.score;
+  $('#gLvl').textContent='Niveau '+st.level;
+  $('#gLives').textContent='❤️'.repeat(Math.max(0,st.lives))+'🖤'.repeat(Math.max(0,3-st.lives));
+  const c=$('#gCombo');c.hidden=st.combo<2;c.textContent='🔥 série '+st.combo;
+}
+
+/* paquets en vol */
+function env(col,x,y){
+  const g=document.createElementNS(NS,'g');
+  g.innerHTML=`<rect x="-17" y="-12" width="34" height="24" rx="5" fill="#fff" stroke="${col}" stroke-width="3.5"/><path d="M-17 -10 L0 3 L17 -10" fill="none" stroke="${col}" stroke-width="3"/>`;
+  g.setAttribute('transform',`translate(${x},${y})`);
+  return g;
+}
+function fly(pts,col,cb,speed){
+  const g=env(col,pts[0][0],pts[0][1]);gfl.appendChild(g);
+  let tot=0;const seg=[];
+  for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);seg.push(d);tot+=d;}
+  flights.push({g,pts,seg,tot,d:0,speed,cb});
+}
+function stepFlights(dt){
+  for(const f of flights.slice()){
+    f.d+=f.speed*dt;
+    if(f.d>=f.tot){f.g.remove();flights.splice(flights.indexOf(f),1);if(f.cb)f.cb();continue;}
+    let d=f.d,i=0;
+    while(i<f.seg.length-1&&d>f.seg[i]){d-=f.seg[i];i++;}
+    const a=f.pts[i],b=f.pts[i+1],k=d/f.seg[i];
+    f.g.setAttribute('transform',`translate(${a[0]+(b[0]-a[0])*k},${a[1]+(b[1]-a[1])*k})`);
+  }
+}
+function mark(id,ch,col){
+  const t=document.createElementNS(NS,'text');
+  t.setAttribute('x',POSG[id][0]);t.setAttribute('y',POSG[id][1]-30);t.setAttribute('class','gmark');t.setAttribute('fill',col);t.textContent=ch;
+  gfl.appendChild(t);setTimeout(()=>t.remove(),900);
+}
+function pulse(id){
+  const el=$(`#gscene .gdev[data-id="${id}"]`);if(!el)return;
+  el.classList.add('pulse');setTimeout(()=>el.classList.remove('pulse'),1100);
+}
+
+/* file d'attente */
+const ttl=()=>Math.max(6,15-1.2*(st.level-1));
+const interval=()=>Math.max(1.8,4.6-.35*(st.level-1));
+function renderQ(){
+  const q=$('#gQueue');
+  if(!st.queue.length){q.innerHTML='<div class="gempty">📭 Aucun paquet en attente… prépare-toi !</div>';return;}
+  q.innerHTML=st.queue.map(p=>`<button class="gcard${p.id===st.sel?' sel':''}" data-id="${p.id}"><div class="ghead"><span class="gic">${p.ic}</span><b>De : ${FROM[p.src]}</b></div><div class="gtxt">${p.txt}</div><div class="bar"><i></i></div></button>`).join('');
+  updBars();
+}
+function updBars(){
+  st.queue.forEach(p=>{
+    const i=$(`#gQueue .gcard[data-id="${p.id}"] .bar i`);if(!i)return;
+    const r=Math.max(0,1-p.age/ttl());
+    i.style.width=(r*100)+'%';i.style.background=r<.3?'#dc2626':r<.6?'#f59e0b':'#22c55e';
+  });
+}
+$('#gQueue').addEventListener('click',e=>{
+  const c=e.target.closest('.gcard');if(!c||st.pause||st.over)return;
+  st.sel=+c.dataset.id;renderQ();
+});
+
+/* génération des paquets */
+function spawn(){
+  const kinds=st.level<2?['file','web']:st.level<3?['file','web','msg']:['file','web','msg','fileR','webR'];
+  const k=kinds[Math.floor(Math.random()*kinds.length)];
+  const rc=()=>CLIENTS[Math.floor(Math.random()*3)];
+  let src,dst,txt,ic;
+  if(k==='file'){src=rc();dst='server';txt='Je veux ouvrir mon fichier';ic='📁';}
+  else if(k==='web'){src=rc();dst='router';txt='Je veux voir un site web';ic='🌍';}
+  else if(k==='msg'){src=rc();do{dst=rc();}while(dst===src);txt='Message pour '+NAMES[dst];ic='💬';}
+  else if(k==='fileR'){src='server';dst=rc();txt='Voici le fichier demandé par '+NAMES[dst];ic='📄';}
+  else{src='router';dst=rc();txt='Page web d’Internet pour '+NAMES[dst];ic='🌐';}
+  const p={id:++st.uid,k,src,dst,txt,ic,age:0};
+  st.fly++;pulse(src);
+  fly([POSG[src],POSG.sw],'#2563eb',()=>{
+    st.fly--;if(st.over||!st.run)return;
+    st.queue.push(p);if(!st.sel)st.sel=p.id;renderQ();beep(520,.08);
+  },300);
+}
+
+const EXPL={
+  file:()=>'Une demande de fichier doit aller au serveur : c’est lui qui garde les fichiers.',
+  web:()=>'Pour aller sur Internet, le paquet doit passer par le routeur, la porte de sortie du réseau.',
+  msg:p=>'Ce message était pour '+NAMES[p.dst]+' : le switch envoie chaque message au bon destinataire.',
+  fileR:p=>'Le serveur répond au client qui a demandé le fichier : '+NAMES[p.dst]+'.',
+  webR:p=>'La page web doit être livrée à '+NAMES[p.dst]+', le client qui l’a demandée.'
+};
+const LEVELUP={2:'Les clients s’écrivent maintenant entre eux !',3:'Les réponses arrivent : le serveur et Internet répondent aux clients.'};
+
+function loseLife(){st.lives--;st.combo=0;updHUD();if(st.lives<=0)gameOver();}
+
+function tap(id){
+  if(!st.run||st.pause||st.over)return;
+  const p=st.queue.find(x=>x.id===st.sel)||st.queue[0];
+  if(!p){say('Pas de paquet à aiguiller pour l’instant… patience !','');return;}
+  st.queue=st.queue.filter(x=>x!==p);
+  st.sel=st.queue.length?st.queue[0].id:null;
+  renderQ();
+  const ok=id===p.dst;
+  st.fly++;
+  fly([POSG.sw,POSG[id]],ok?'#16a34a':'#dc2626',()=>{st.fly--;mark(id,ok?'✔':'✖',ok?'#16a34a':'#dc2626');},420);
+  if(ok){
+    const pts=10+Math.min(st.combo,5)*2;
+    st.score+=pts;st.combo++;st.ok++;
+    let m='✅ Bien aiguillé ! +'+pts+' points';
+    if(st.ok%6===0){st.level=Math.min(9,st.level+1);m+=' · ⬆ Niveau '+st.level+' ! '+(LEVELUP[st.level]||'Ça va plus vite !');beep(1100,.25);}
+    else beep(880,.12);
+    say(m,'good');updHUD();
+  }else{
+    say('❌ '+EXPL[p.k](p),'bad');beep(180,.3,'sawtooth');
+    loseLife();
+  }
+}
+$('#gsvg').addEventListener('click',e=>{const d=e.target.closest('.gdev');if(d)tap(d.dataset.id);});
+
+/* boucle de jeu */
+function loop(t){
+  raf=requestAnimationFrame(loop);
+  if(!last)last=t;
+  const dt=Math.min(.05,(t-last)/1000);last=t;
+  if(st.pause)return;
+  stepFlights(dt);
+  if(!st.run)return;
+  st.spawn-=dt;
+  if(st.spawn<=0&&st.queue.length+st.fly<4){spawn();st.spawn=interval();}
+  let changed=false;
+  for(const p of st.queue.slice()){
+    p.age+=dt;
+    if(p.age>=ttl()){
+      st.queue=st.queue.filter(x=>x!==p);
+      if(st.sel===p.id)st.sel=st.queue.length?st.queue[0].id:null;
+      say('⏱ Trop lent ! Le paquet pour '+NAMES[p.dst]+' a été perdu.','bad');beep(180,.3,'sawtooth');
+      changed=true;loseLife();
+      if(st.over)return;
+    }
+  }
+  if(changed)renderQ();else updBars();
+}
+
+function clearFlights(){flights.forEach(f=>f.g.remove());flights=[];$$('#gfl .gmark').forEach(e=>e.remove());}
+function start(){
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.resume)actx.resume();}catch(e){}
+  clearFlights();
+  Object.assign(st,{run:true,pause:false,over:false,score:0,lives:3,level:1,combo:0,ok:0,spawn:.8,queue:[],fly:0,sel:null});
+  $('#gStart').hidden=true;$('#gPauseOv').hidden=true;$('#gEnd').hidden=true;
+  $('#gPause').textContent='⏸';
+  renderQ();updHUD();say(HINT,'');
+  last=0;if(!raf)raf=requestAnimationFrame(loop);
+}
+function gameOver(){
+  st.over=true;st.run=false;st.queue=[];st.sel=null;clearFlights();renderQ();
+  const isBest=st.score>best&&st.score>0;
+  if(isBest){best=st.score;try{localStorage.setItem('reseau-best',String(best));}catch(e){}}
+  const s=st.score;
+  Progress.mark('game',{score:st.score,lvl:st.level});
+  const rank=s>=250?['🏆','Maître du réseau !']:s>=120?['🌟','Super aiguilleur !']:s>=50?['👍','Bon début !']:['💪','Entraîne-toi encore !'];
+  $('#gEndBox').innerHTML=`<div class="big">${rank[0]}</div><h3>${rank[1]}</h3><p>Score : <b>${s}</b> · Niveau atteint : <b>${st.level}</b></p><p>${isBest?'🎉 Nouveau record !':'Meilleur score : <b>'+best+'</b>'}</p><button class="btn green" id="gAgain">↻ Rejouer</button>`;
+  $('#gEnd').hidden=false;$('#gAgain').onclick=start;
+  beep(260,.5,'triangle');
+  updHUD();
+}
+function setPause(on){
+  if(!st.run||st.over)return;
+  st.pause=on;$('#gPauseOv').hidden=!on;$('#gPause').textContent=on?'▶':'⏸';
+}
+$('#gGo').onclick=start;
+$('#gPause').onclick=()=>setPause(!st.pause);
+$('#gResume').onclick=()=>setPause(false);
+onLeave.jeu=()=>setPause(true);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)setPause(true);});
+say(HINT,'');updHUD();renderQ();
+})();
+
+/* Démarrage */
+Progress.init();
+const h0=location.hash.slice(1);
+show(Progress.isOpen(h0)?h0:'accueil');
+</script>
+</body>
+</html>
